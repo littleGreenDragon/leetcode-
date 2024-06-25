@@ -50,7 +50,7 @@
                         while(stack.length>0 && height[left] == height[stack.at(-1)]){//找到左边界
                             left = stack.pop();
                         }
-                        if(stack.length>0){
+                        if(stack.length>0){//存在左边界才有水
                             let width = i-stack.at(-1)-1;
                             res += width*(Math.min(height[i], height[stack.at(-1)]) - height[left]);
                         }
