@@ -8,7 +8,7 @@
     <script>
         
         /**
-         * 9:27
+         * 9:27-忘了
          * @param {number[]} nums
          * @return {number[]}
          */
@@ -41,6 +41,40 @@
         };
         console.log(sortArray([5,2,3,1]));//[1,2,3,5]
         console.log(sortArray([5,1,1,2,0,0]));//[0,0,1,1,2,5]
+        /**
+         * 10:19-10-31
+         * @param {number[]} nums
+         * @return {number[]}
+         */
+        var sortArray1 = function(nums) {
+            function patition(start, end){
+                let pivot = nums[start];
+                let left = start;
+                let right = end;
+                while(left < right){
+                    while(left<right && nums[right] >= pivot){
+                        right--;
+                    }
+                    nums[left] = nums[right];
+                    while(left<right && nums[left] < pivot){
+                        left++;
+                    }
+                    nums[right] = nums[left];
+                }
+                nums[left] = pivot;
+                return left;
+            }
+            function quick_sort(start, end){
+                let index = patition(start, end);
+                if(start<index-1) quick_sort(start, index-1);
+                if(index+1<end) quick_sort(index+1, end);
+            }
+            quick_sort(0, nums.length-1);
+            return nums;
+        };
+
+        console.log(sortArray1([5,2,3,1]));//[1,2,3,5]
+        console.log(sortArray1([5,1,1,2,0,0]));//[0,0,1,1,2,5]
     </script>
 </head>
 <body>
