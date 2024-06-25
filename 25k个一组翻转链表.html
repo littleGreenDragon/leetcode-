@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>25k个一组翻转链表</title>
+    <meta name="description" content="给你链表的头节点 head ，每 k 个节点一组进行翻转，请你返回修改后的链表。 k 是一个正整数，它的值小于或等于链表的长度。如果节点总数不是 k 的整数倍，那么请将最后剩余的节点保持原有顺序。你不能只是单纯的改变节点内部的值，而是需要实际进行节点交换。">
+    <script>
+        /**
+         * Definition for singly-linked list.
+         * function ListNode(val, next) {
+         *     this.val = (val===undefined ? 0 : val)
+         *     this.next = (next===undefined ? null : next)
+         * }
+         */
+         function ListNode(val, next) {
+            this.val = (val===undefined ? 0 : val)
+            this.next = (next===undefined ? null : next)
+        }
+        function create_list(list){
+            let l_head = null;
+            let l_tail;
+            let in_number;
+            for(let i = 0; i < list.length; i++)
+            {
+                in_number = list[i];
+                if(! l_head){
+                    l_head = new ListNode(in_number, undefined);
+                    l_tail = l_head;
+                }else{
+                    l_tail.next = new ListNode(in_number, undefined);
+                    l_tail = l_tail.next;
+                }
+            }
+            return l_head;
+        }
+        /**
+         * @param {ListNode} head
+         * @param {number} k
+         * @return {ListNode}
+         */
+        var reverseKGroup1 = function(head, k) {
+            let stack = [];
+            let i = head;
+            let new_head = new ListNode();
+            let j = new_head;
+            while(i){
+                for(let count=0;count<k&&i!=null;count++){//k个一组了
+                    stack.push(i);
+                    i = i.next;
+                }
+                if(stack.length == k){//够k个，弹栈连接
+                    while(stack.length>0){
+                        j.next = stack.pop();
+                        j = j.next;
+                    }
+                    j.next = i;//先接上后面的，如果后面不足k个正好就是完整链表，否则后续会继续替换
+                }
+            }
+            return new_head.next;
+        };
+        /**
+         * @param {ListNode} head
+         * @param {number} k
+         * @return {ListNode}
+         */
+        var reverseKGroup2 = function(head, k) {//使用插入法，将链表分为已反转和未反转两个部分 0->A->B->C->D
+            let new_head = new ListNode(undefined, head);
+            let head_i = new_head;//用于头插的节点，记录这k个的头
+            let other_i = head_i.next;//等待插入到head_i后面的节点头
+            let flag = true;//是否首次到尾
+            while(other_i){
+                let count = 1;
+                for(;count<k && other_i.next;count++){//如果还存在需要插入的节点，翻转k个
+                    let node = other_i.next;//需要插入的节点
+                    other_i.next = other_i.next.next;//更新需要插入的节点
+                    node.next = head_i.next;//头插入节点
+                    head_i.next = node;
+                }
+                if(count<k && flag){//如果不足k个，那么末尾重新再反转一次
+                    flag = false;
+                    other_i = head_i.next;
+                }else{//足k个，准备下一组
+                    head_i = other_i;//other_i是上一组k个的最后一个节点，也就是下一次插入的头
+                    other_i = head_i.next;
+                }
+            }
+            return new_head.next;
+        };
+
+        console.log(reverseKGroup1(create_list([1,2,3,4,5]), 2));//[2,1,4,3,5]
+        console.log(reverseKGroup1(create_list([1,2,3,4,5]), 3));//[3,2,1,4,5]
+
+        console.log(reverseKGroup2(create_list([1,2,3,4,5]), 2));//[2,1,4,3,5]
+        console.log(reverseKGroup2(create_list([1,2,3,4,5]), 3));//[3,2,1,4,5]
+        
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

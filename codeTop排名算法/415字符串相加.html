@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>415字符串相加</title>
+    <meta name="description" content="给定两个字符串形式的非负整数 num1 和num2 ，计算它们的和并同样以字符串形式返回。
+    你不能使用任何內建的用于处理大整数的库（比如 BigInteger）， 也不能直接将输入的字符串转换为整数形式。
+     ">
+     <script>
+        /**
+         * 6:33-6:41
+         * @param {string} num1
+         * @param {string} num2
+         * @return {string}
+         */
+        var addStrings = function(num1, num2) {
+            function get_num(str){
+                return  str.charCodeAt()-'0'.charCodeAt();
+            }
+            let first_i = num1.length-1;
+            let second_i = num2.length-1;
+            let res = '';
+            let carry = 0;
+            while(first_i>=0 && second_i>=0){
+                let sum = get_num(num1[first_i--])+ get_num(num2[second_i--]) + carry;
+                carry = Math.floor(sum/10);
+                res = sum%10 + res;
+            }
+            while(first_i>=0){
+                let sum = get_num(num1[first_i--]) + carry;
+                carry = Math.floor(sum/10);
+                res = sum%10 + res;
+            }
+            while(second_i>=0){
+                let sum = get_num(num2[second_i--]) + carry;
+                carry = Math.floor(sum/10);
+                res = sum%10 + res;
+            }
+            if(carry != 0){
+                res = carry + res;
+            }
+            return res;
+        };
+        console.log(addStrings(num1 = "11", num2 = "123"));//"134"
+        console.log(addStrings(num1 = "456", num2 = "77"));//"533"
+        console.log(addStrings(num1 = "0", num2 = "0"));//"0"
+        console.log(addStrings(num1 = "1", num2 = "9"));//"10"
+     </script>
+</head>
+<body>
+    
+</body>
+</html>

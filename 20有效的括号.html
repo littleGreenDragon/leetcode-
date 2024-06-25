@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>20有效的括号</title>
+    <meta name="description" content="给定一个只包括 '('，')'，'{'，'}'，'['，']' 的字符串 s ，判断字符串是否有效。
+    有效字符串需满足：
+    左括号必须用相同类型的右括号闭合。
+    左括号必须以正确的顺序闭合。
+    每个右括号都有一个对应的相同类型的左括号。">
+    <script>
+        /**
+         * @param {string} s
+         * @return {boolean}
+         */
+        var isValid1 = function(s) {
+            let stack = [];
+            for(let char of s){
+                if(char == ')'){
+                    if(stack.pop() != '(')return false;
+                }else if(char == '}'){
+                    if(stack.pop() != '{')return false;
+                }else if(char == ']'){
+                    if(stack.pop() != '[')return false;
+                }else{
+                    stack.push(char);
+                }
+            }
+            if(stack.length != 0){
+                return false;
+            }
+            return true;
+        };
+        var isValid2 = function(s) {//挨个写括号麻烦，加个map，让他自动匹配
+            let mapping = new Map();
+            mapping.set(')','(');
+            mapping.set(']','[');
+            mapping.set('}','{');
+            let stack = [];
+            for(let char of s){
+                if(mapping.has(char)){
+                    if(stack.pop() != mapping.get(char))return false;
+                }else{
+                    stack.push(char);
+                }
+            }
+            if(stack.length != 0){
+                return false;
+            }
+            return true;
+        };
+        console.log(isValid1("()"));
+        console.log(isValid1("()[]{}"));
+        console.log(isValid1("(]"));
+
+        console.log(isValid2("()"));
+        console.log(isValid2("()[]{}"));
+        console.log(isValid2("(]"));
+
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

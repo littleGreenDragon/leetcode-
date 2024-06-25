@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>75颜色分类</title>
+    <meta name="description" content="给定一个包含红色、白色和蓝色、共 n 个元素的数组 nums ，原地对它们进行排序，使得相同颜色的元素相邻，并按照红色、白色、蓝色顺序排列。我们使用整数 0、 1 和 2 分别表示红色、白色和蓝色。必须在不使用库内置的 sort 函数的情况下解决这个问题。">
+    <script>
+        /**
+         * @param {number[]} nums
+         * @return {void} Do not return anything, modify nums in-place instead.
+         */
+        var sortColors1 = function(nums) {//读取每个类型有多少个，然后重写数组
+            let count = new Array(3).fill(0);
+            for(let num of nums){
+                count[num] ++;
+            }
+            let index = 0;
+            for(let i = 0;i< count.length;i++){
+                for(let color_count = 0; color_count < count[i];color_count++){
+                    nums[index++] = i;
+                }
+            }
+            return nums;
+        };
+        var sortColors2 = function(nums) {//两次循环，第一次循环将0全部移到前面，第二次循环将1都移到前面
+            let index = 0;
+            for(let i = 0;i< nums.length;i++){
+                if(nums[i] == 0){
+                    [nums[index], nums[i]] = [nums[i], nums[index]];
+                    index ++;
+                }
+            }
+            for(let i = index;i< nums.length;i++){
+                if(nums[i] == 1){
+                    [nums[index], nums[i]] = [nums[i], nums[index]];
+                    index ++;
+                }
+            }
+            return nums;
+        };
+        var sortColors3 = function(nums) {//一次循环，两个指针，分别控制0 1存储的位置；注意虽然0后续会把1交换回来的又换到后方，但是1还是能再换回来;注意p1的至少是p0的末尾，因此p0移动时，p1也需要移动
+            let p0 = 0;
+            let p1 = 0;
+            let index = 0;
+            while(index < nums.length){
+                if(nums[index] == 0){//p0有可能会把1换回去，所以index--再次判断
+                    [nums[p0], nums[index]] = [nums[index], nums[p0]];
+                    if(p0 < p1){//说明p0把p1的换走了，那么p1再换一次
+                        [nums[p1], nums[index]] = [nums[index], nums[p1]];
+                    }
+                    p0++;
+                    p1++;
+                }else if(nums[index] == 1){
+                    [nums[p1], nums[index]] = [nums[index], nums[p1]];
+                    p1++;
+                }
+                index++;
+            }
+            return nums;
+        };
+        var sortColors4 = function(nums) {//双指针，从两头进行，分别记录0和2
+            let p0 = 0;//记录0的个数
+            let p2 = nums.length-1;
+            while(nums[p0] == 0){//p0指向左边界，指向第一个不是0的元素
+                p0 ++;
+            }
+            while(nums[p2] == 2){//p2指向右边界，指向第一个不是2的元素
+                p2 --;
+            }
+            for(let i = p0;i <= p2;i++){//移动i指向的数字
+                if(nums[i] == 2){//把2都移走
+                    [nums[i], nums[p2]] = [nums[p2], nums[i]];
+                    while(nums[p2] == 2){
+                        p2--;
+                    }
+                }
+                if(nums[i] == 0){//现在i的位置只可能是0或者1
+                    [nums[i], nums[p0]] = [nums[p0], nums[i]];
+                    p0++;
+                }
+            }
+            return nums;
+        };
+        
+        console.log(sortColors1([2,0,2,1,1,0]));//[0,0,1,1,2,2]
+        console.log(sortColors1([2,0,1]));//[0,1,2]
+
+        console.log(sortColors2([2,0,2,1,1,0]));//[0,0,1,1,2,2]
+        console.log(sortColors2([2,0,1]));//[0,1,2]
+
+        console.log(sortColors3([2,0,2,1,1,0]));//[0,0,1,1,2,2]
+        console.log(sortColors3([2,0,1]));//[0,1,2]
+
+        console.log(sortColors4([2,0,2,1,1,0]));//[0,0,1,1,2,2]
+        console.log(sortColors4([2,0,1]));//[0,1,2]
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

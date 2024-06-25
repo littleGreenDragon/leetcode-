@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>215数组中的第k个最大元素</title>
+    <meta name="description" content="给定整数数组 nums 和整数 k，请返回数组中第 k 个最大的元素。请注意，你需要找的是数组排序后的第 k 个最大的元素，而不是第 k 个不同的元素。你必须设计并实现时间复杂度为 O(n) 的算法解决此问题。">
+    <script>
+        /**
+         * @param {number[]} nums
+         * @param {number} k
+         * @return {number}
+         */
+        var findKthLargest = function(nums, k) {
+            class Heap{
+                constructor(compare){
+                    this.data = [];
+                    this.length = 0;
+                    this.compare = compare;//父节点和子节点的关系，大根堆则大于的时候返回正数
+                }
+                create_heap_up(list){//向上调整堆，每次插在最末尾再上浮，O(nlogn)
+                    for(let i=0;i<list.length;i++){
+                       this.push(list[i]);
+                    }
+                }
+                create_heap_down(list){//向下调整堆，从堆的最后一个树开始向下O(n)
+                    this.data = list;
+                    this.length = list.length;
+                    //最后一个节点是n-1，其父节点是(（n-1）-1)/2
+                    for(let i=Math.floor((this.length-2)/2);i>=0;i--){
+                        this.sink(i);
+                    }   
+                }
+                push(num){
+                    this.data.push(num);
+                    this.bubble_up(this.length);
+                    this.length++;
+                }
+                bubble_up(index){
+                    let parent = Math.floor((index-1)/2);//找到parent
+                    while(0<=parent && this.compare(this.data[index], this.data[parent])>0){//存在parent
+                        [this.data[parent], this.data[index]] = [this.data[index], this.data[parent]];
+                        index = parent;
+                        parent = Math.floor((index-1)/2);
+                    }
+                }
+                top(){
+                    return this.data[0];
+                }
+                print(){
+                    let res = [];
+                    while(this.length>0){
+                        res.push(this.pop());
+                    }
+                    return res;
+                }
+                pop(){
+                    let res = this.data[0];
+                    [this.data[0], this.data[this.length-1]]=[this.data[this.length-1], this.data[0]];
+                    this.length--;
+                    this.sink(0);
+                    return res;
+                }
+                sink(index){
+                    let child_left = (2*index)+1;
+                    let child_right = (2*index)+2;
+                    while(child_left < this.length){
+                        let max_child_index = child_left;
+                        if(child_right < this.length && this.compare(this.data[child_right], this.data[child_left])>0){
+                            max_child_index = child_right;
+                        }
+                        if(this.compare(this.data[max_child_index], this.data[index])>0){
+                            [this.data[max_child_index], this.data[index]] = [this.data[index], this.data[max_child_index]];
+                        }else{
+                            break;
+                        }
+                        index = max_child_index;
+                        child_left = (2*index)+1;
+                        child_right = (2*index)+2;
+                    } 
+                }
+            }
+
+            //测试堆
+            let heap = new Heap(function(a,b){
+                return a-b;
+            });
+            heap.create_heap_down(nums);//创建堆
+            for(let i = 0;i<k-1;i++){
+                heap.pop();
+            }
+            return heap.pop();
+        };
+        var findKthLargest2 = function(nums, k) {
+            function quick_sort(left, right){
+                let pivot = patition(left, right);
+                while(left <= right){
+                    if(pivot[0]<=nums.length-k && nums.length-k<=pivot[1]) {//正好是第k大的，直接返回
+                        return nums[pivot[0]];
+                    }else if(pivot[1] < nums.length-k){//找到的位置比k大位置小，K大一定在右边
+                        left = pivot[1]+1;
+                    }else{//找到的位置比k大位置还大，k大一定在左边
+                        right = pivot[0]-1;
+                    }
+                    pivot = patition(left,right);
+                }
+            }
+            function patition(left, right){//left是等于枢轴的第一个index，mid是right的第一个index,right最后是枢轴的最后一个元素
+                let index = getMid(left, right);
+                [nums[index], nums[left]] = [nums[left], nums[index]];
+                let pivot = nums[left];
+                let mid = left + 1;
+                while(mid <= right){
+                    if(nums[mid] > pivot){
+                        [nums[mid], nums[right]] = [nums[right], nums[mid]];
+                        right--;
+                    }else if(nums[mid] < pivot){
+                        [nums[mid], nums[left]] = [nums[left], nums[mid]];
+                        left++;
+                    }else{
+                        mid++;
+                    }
+                }
+                return [left, right];
+            }
+            function getMid(left, right){
+                let mid = Math.floor((left+right)/2);
+                if((nums[right]<nums[mid] && nums[mid]<nums[left]) || (nums[left]<nums[mid] && nums[mid]<nums[right])){
+                    return mid;
+                }
+                if((nums[mid]<nums[right] && nums[right]<nums[left]) || (nums[left]<nums[right] && nums[right]<nums[mid])){
+                    return right;
+                }
+                return left;
+            }
+            return quick_sort(0,nums.length-1);
+        };
+
+        console.log(findKthLargest([3,2,1,5,6,4], k = 2));//5
+        console.log(findKthLargest([3,2,3,1,2,4,5,5,6], k = 4));//4
+
+        console.log(findKthLargest2([3,2,1,5,6,4], k = 2));//5
+        console.log(findKthLargest2([3,2,3,1,2,4,5,5,6], k = 4));//4
+        console.log(findKthLargest2([3,2,3,1,2,4,5,5,6], k = 4));//4
+        console.log(findKthLargest2([1], k = 1));//1
+        console.log(findKthLargest2([2,1], k = 2));//1
+        console.log(findKthLargest2([1,1,1,1,1,1,1,1,1,1,1,1,1], k = 2));//1
+
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

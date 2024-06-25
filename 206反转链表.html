@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>206反转链表</title>
+    <meta name="description" content="给你单链表的头节点 head ，请你反转链表，并返回反转后的链表">
+    <script>
+                /**
+         * Definition for singly-linked list.
+         * function ListNode(val, next) {
+         *     this.val = (val===undefined ? 0 : val)
+         *     this.next = (next===undefined ? null : next)
+         * }
+         */
+         function ListNode(val, next) {
+            this.val = (val===undefined ? 0 : val)
+            this.next = (next===undefined ? null : next)
+        }
+        function create_list(list){
+            let l_head = null;
+            let l_tail;
+            let in_number;
+            for(let i = 0; i < list.length; i++)
+            {
+                in_number = list[i];
+                if(! l_head){
+                    l_head = new ListNode(in_number, undefined);
+                    l_tail = l_head;
+                }else{
+                    l_tail.next = new ListNode(in_number, undefined);
+                    l_tail = l_tail.next;
+                }
+            }
+            return l_head;
+        }
+        /**
+         * @param {ListNode} head
+         * @return {ListNode}
+         */
+        var reverseList1 = function(head) {//通过将链表分成两个部分，前排为已翻转，后排为未反转，使用插入法翻转链表
+            if(!(head && head.next)){//至少两个节点才需要反转
+                return head;
+            }
+            let dummy = new ListNode(undefined,head);
+            let change_node = dummy;//插入位置
+            let n1 = change_node.next;//已经反转序列的最后一个
+            let n2 = n1.next;//还没反转的序列的头节点
+            while(n2){//还有没有反转的部分
+                n1.next = n2.next;
+                n2.next = change_node.next;
+                change_node.next = n2;
+                n2 = n1.next;//已经确保n1是一定存在的
+            }
+            return dummy.next;
+        };
+        /**
+         * @param {ListNode} head
+         * @return {ListNode}
+         */
+         var reverseList2 = function(head) {//A->B->C    A<-B C 通过反转指针来反转
+            if(!(head && head.next)){//没有需要反转的
+                return head;
+            }
+            //直接让指针反转
+            let reversed = head;
+            let reverse = reversed.next;
+            reversed.next = null;
+            while(reverse){//还有需要反转的
+                let other = reverse.next;
+                reverse.next = reversed;
+                reversed = reverse;
+                reverse = other;
+            }
+            return reversed;
+        };
+        /**
+         * @param {ListNode} head
+         * @return {ListNode}
+         */
+         var reverseList3 = function(head) {//A->B->C    A<-B C 
+            function reverse(first, second){
+                if(! second) return first;
+                let head = reverse(second, second.next);
+                second.next = first;
+                return head;
+            }
+            return reverse(null, head);
+        };
+
+        console.log(reverseList1(create_list([1,2,3,4])));
+        console.log(reverseList1(create_list([])));
+        console.log(reverseList1(create_list([1])));
+        console.log(reverseList1(create_list([2,1])));
+
+        console.log(reverseList2(create_list([1,2,3,4])));
+        console.log(reverseList2(create_list([])));
+        console.log(reverseList2(create_list([1])));
+        console.log(reverseList2(create_list([2,1])));
+
+        console.log(reverseList3(create_list([1,2,3,4])));
+        console.log(reverseList3(create_list([])));
+        console.log(reverseList3(create_list([1])));
+        console.log(reverseList3(create_list([2,1])));
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>21合并两个有序链表</title>
+    <meta name="description" content="将两个升序链表合并为一个新的 升序 链表并返回。新链表是通过拼接给定的两个链表的所有节点组成的。">
+    <script>
+        /**
+         * Definition for singly-linked list.
+         * function ListNode(val, next) {
+         *     this.val = (val===undefined ? 0 : val)
+         *     this.next = (next===undefined ? null : next)
+         * }
+         */
+         function ListNode(val, next) {
+            this.val = (val===undefined ? 0 : val)
+            this.next = (next===undefined ? null : next)
+        }
+        function create_list(list){
+            let l_head = null;
+            let l_tail;
+            let in_number;
+            for(let i = 0; i < list.length; i++)
+            {
+                in_number = list[i];
+                if(! l_head){
+                    l_head = new ListNode(in_number, undefined);
+                    l_tail = l_head;
+                }else{
+                    l_tail.next = new ListNode(in_number, undefined);
+                    l_tail = l_tail.next;
+                }
+            }
+            return l_head;
+        }
+        /**
+         * @param {ListNode} list1
+         * @param {ListNode} list2
+         * @return {ListNode}
+         */
+        var mergeTwoLists = function(list1, list2) {
+            let list = new ListNode();
+            let num1_i = list1;
+            let num2_i = list2;
+            let num_i = list;
+            while(num1_i && num2_i){
+                if(num1_i.val > num2_i.val){
+                    num_i.next = num2_i;
+                    num2_i = num2_i.next;
+                }else{
+                    num_i.next = num1_i;
+                    num1_i = num1_i.next;
+                }
+                num_i = num_i.next;
+            }
+            if(num1_i){
+                num_i.next = num1_i
+            }
+            if(num2_i){
+                num_i.next = num2_i;
+            }
+            return list.next;
+        };
+
+        console.log(mergeTwoLists(create_list([1,2,4]),create_list([1,3,4])));//1 1 2 3 4 4
+        console.log(mergeTwoLists(create_list([]),create_list([])));// null
+        console.log(mergeTwoLists(create_list([]),create_list([0])));// 0
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

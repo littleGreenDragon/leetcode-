@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>139单词拆分</title>
+    <meta name="description" content="给你一个字符串 s 和一个字符串列表 wordDict 作为字典。如果可以利用字典中出现的一个或多个单词拼接出 s 则返回 true。
+    注意：不要求字典中出现的单词全部都使用，并且字典中的单词可以重复使用。">
+    <script>
+        /**
+         * @param {string} s
+         * @param {string[]} wordDict
+         * @return {boolean}
+         */
+        var wordBreak = function(s, wordDict) {//完全背包问题,排列问题（背包是组合问题）
+            //dp[i][j]表示s从i到j的位置是否存在于wordDict,dp[i][j]为true的前提是dp[i][j]是wordDict的元素且dp[0][i-1]也是true
+            let dp = Array.from({length:s.length}, ()=>{
+                return new Array(s.length).fill(false);
+            });
+            let word_set = new Set(wordDict);
+            for(let j=0;j<s.length;j++){//控制子串末尾
+                for(let i=0;i<=j;i++){//控制子串开头
+                    if(word_set.has(s.slice(i,j+1))){
+                       dp[i][j] = true;
+                       if(i>0 && dp[0][i-1]) dp[0][j] = true;
+                    }
+                }
+            }
+            return dp[0][s.length-1];
+        };
+        console.log(wordBreak(s = "leetcode", wordDict = ["leet", "code"]));//true
+        console.log(wordBreak(s = "applepenapple", wordDict = ["apple", "pen"]));//true
+        console.log(wordBreak(s = "catsandog", wordDict = ["cats", "dog", "sand", "and", "cat"]));//false
+
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

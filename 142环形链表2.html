@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>142环形链表2</title>
+    <meta name="description" content="给定一个链表的头节点  head ，返回链表开始入环的第一个节点。 如果链表无环，则返回 null。如果链表中有某个节点，可以通过连续跟踪 next 指针再次到达，则链表中存在环。 为了表示给定链表中的环，评测系统内部使用整数 pos 来表示链表尾连接到链表中的位置（索引从 0 开始）。如果 pos 是 -1，则在该链表中没有环。注意：pos 不作为参数进行传递，仅仅是为了标识链表的实际情况。不允许修改 链表。">
+    <script>
+        /**
+         * Definition for singly-linked list.
+         * function ListNode(val) {
+         *     this.val = val;
+         *     this.next = null;
+         * }
+         */
+
+        /**
+         * @param {ListNode} head
+         * @return {ListNode}
+         */
+        var detectCycle = function(head) {//保存碰到过的每一个节点，第一个重复的就是循环节点
+            if(!head)return null;
+            let node_set = new Set();
+            while(head){
+                if(node_set.has(head)){
+                    return head;
+                }else{
+                    node_set.add(head);
+                    head = head.next;
+                }
+            }
+            return null;
+        };
+        var detectCycle1 = function(head) {//快慢指针
+            //设环外长度为a，快慢指针在环内的b位置相遇，环剩下的部分为c，在相遇之前，fast已经走了n圈
+            //fast:a + n(b+c) + b = a + (n + 1)b + nc
+            //slow:a + b 
+            //fast = 2slow: a + (n+1)b + nc = 2a + 2b=>a = (n-1)b +nc = c + (n-1)(b+c) 即起点到入口点的长度等于相遇点到环的入口点加(n-1)圈，所以在相遇的位置开始添加一个指针，直到两个指针相遇
+            if(!head) return null;
+            let fast = head;
+            let slow = head;
+            let flag = false;
+            while(fast.next && fast.next.next){
+                fast = fast.next.next;
+                slow = slow.next;
+                if(fast == slow){
+                    flag = true;
+                    break;
+                }
+            }
+            if(flag){
+                let a = head;
+                while(a != slow){
+                    a = a.next;
+                    slow = slow.next;
+                }
+                return a;
+            }
+            return null;
+        };
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

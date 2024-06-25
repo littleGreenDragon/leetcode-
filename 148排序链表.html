@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>148排序链表</title>
+    <meta name="description" content="给你链表的头结点 head ，请将其按 升序 排列并返回 排序后的链表 。进阶：你可以在 O(n log n) 时间复杂度和常数级空间复杂度下，对链表进行排序吗？">
+    <script>
+        /**
+         * Definition for singly-linked list.
+         * function ListNode(val, next) {
+         *     this.val = (val===undefined ? 0 : val)
+         *     this.next = (next===undefined ? null : next)
+         * }
+         */
+         function ListNode(val, next) {
+            this.val = (val===undefined ? 0 : val)
+            this.next = (next===undefined ? null : next)
+        }
+        function create_list(list){
+            let l_head = null;
+            let l_tail;
+            let in_number;
+            for(let i = 0; i < list.length; i++)
+            {
+                in_number = list[i];
+                if(! l_head){
+                    l_head = new ListNode(in_number, undefined);
+                    l_tail = l_head;
+                }else{
+                    l_tail.next = new ListNode(in_number, undefined);
+                    l_tail = l_tail.next;
+                }
+            }
+            return l_head;
+        }
+        /**
+         * @param {ListNode} head
+         * @return {ListNode}
+         */
+        var sortList = function(head) {//要求时间复杂度O(nlogn)，不能使用快速排序,使用归并排序
+            function merge_two_list(head1, head2){
+                let merge_head = new ListNode();
+                let i_1=head1;
+                let i_2=head2;
+                let i_merge=merge_head;
+                while(i_1 && i_2){
+                    if(i_1.val < i_2.val){
+                        i_merge.next=i_1;
+                        i_merge = i_merge.next;
+                        i_1 = i_1.next;
+                    }else{
+                        i_merge.next=i_2;
+                        i_merge = i_merge.next;
+                        i_2 = i_2.next;
+                    }
+                }
+                if(i_1){
+                    i_merge.next = i_1
+                }
+                if(i_2){
+                    i_merge.next = i_2;
+                }
+                return merge_head.next;
+            }
+            
+            //计算整个链表有多长
+            let length = 0;
+            let i = head;
+            while(i){
+                length++;
+                i = i.next;
+            }
+            if(length<=0) return head;
+            head = new ListNode(undefined, head);
+            for(let list_len=1;list_len<length;list_len+=list_len){//控制每个链表有多少个节点
+                let pre = head;//记录的是排序的两组的前一个节点
+                while(pre.next){//还存在需要排序的组
+                    let first_head = pre.next;
+                    let first_i = first_head;
+                    for(let i=1;i<list_len && first_i.next;i++){
+                        first_i = first_i.next;
+                    }
+                    let second_head = first_i.next;
+                    first_i.next = null;
+                    let second_i = second_head;
+                    for(let i=1;i<list_len && second_i;i++){
+                        second_i = second_i.next;
+                    }
+                    let after;
+                    if(second_i){//是否到结尾了
+                        after = second_i.next;
+                        second_i.next = null;
+                    }else{
+                        after = null;
+                    }
+                    let start = merge_two_list(first_head, second_head);
+                    pre.next = start;
+                    while(pre.next){
+                        pre = pre.next;
+                    }
+                    pre.next = after;
+                }
+            }
+            return head.next;
+        };
+        console.log(sortList(create_list([4,2,1,3])));
+        console.log(sortList(create_list([-1,5,3,4,0])));
+        console.log(sortList(create_list([])));
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

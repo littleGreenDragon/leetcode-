@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>24两两交换链表中的元素</title>
+    <meta name="description" content="给你一个链表，两两交换其中相邻的节点，并返回交换后链表的头节点。你必须在不修改节点内部的值的情况下完成本题（即，只能进行节点交换）。">
+    <script>
+        /**
+         * Definition for singly-linked list.
+         * function ListNode(val, next) {
+         *     this.val = (val===undefined ? 0 : val)
+         *     this.next = (next===undefined ? null : next)
+         * }
+         */
+         function ListNode(val, next) {
+            this.val = (val===undefined ? 0 : val)
+            this.next = (next===undefined ? null : next)
+        }
+        function create_list(list){
+            let l_head = null;
+            let l_tail;
+            let in_number;
+            for(let i = 0; i < list.length; i++)
+            {
+                in_number = list[i];
+                if(! l_head){
+                    l_head = new ListNode(in_number, undefined);
+                    l_tail = l_head;
+                }else{
+                    l_tail.next = new ListNode(in_number, undefined);
+                    l_tail = l_tail.next;
+                }
+            }
+            return l_head;
+        }
+        /**
+         * @param {ListNode} head
+         * @return {ListNode}
+         */
+        var swapPairs = function(head) {
+            if(!(head && head.next)){//至少需要两个节点
+                return head;
+            }
+            let dummy = new ListNode(undefined, head);
+            let change_node = dummy;//需要改变的第一个节点
+            let n1 ;//需要进行插入的节点
+            let n2;//连接后续的节点
+            while(change_node.next && change_node.next.next){//至少有两个节点才去交换
+                n1 = change_node.next;
+                n2 = n1.next;
+                change_node.next = n2;
+                n1.next = n2.next;
+                n2.next = n1;
+                change_node = n1;
+            }
+            return dummy.next;
+        };
+
+        console.log(swapPairs(create_list([1,2,3,4])));
+        console.log(swapPairs(create_list([])));
+        console.log(swapPairs(create_list([1])));
+
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

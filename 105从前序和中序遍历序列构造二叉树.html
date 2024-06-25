@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>105从前序和中序序列构造一个二叉树</title>
+    <script>
+        /**
+         * Definition for a binary tree node.
+         * function TreeNode(val, left, right) {
+         *     this.val = (val===undefined ? 0 : val)
+         *     this.left = (left===undefined ? null : left)
+         *     this.right = (right===undefined ? null : right)
+         * }
+         */
+         function TreeNode(val,left,right){
+            this.val = val==undefined? 0:val;
+            this.left = left==undefined? null:left;
+            this.right = right==undefined?null:right;
+        }
+        /**
+         * @param {number[]} preorder
+         * @param {number[]} inorder
+         * @return {TreeNode}
+         */
+        var buildTree = function(preorder, inorder) {
+            function index(num, start, end){
+                for(let i=start;i<=end;i++){
+                    if(inorder[i] == num) return i;
+                }
+            }
+            function bulid(left, right, start){
+                let num = preorder[start];
+                let mid = index(num, left, right);
+                let left_tree = null;
+                if(mid-1 >= left){
+                    left_tree = bulid(left, mid-1, start+1);
+                }
+                let right_tree = null;
+                if(mid+1 <= right){
+                    right_tree = bulid(mid+1, right, start+1+(mid-left));
+                }
+                return new TreeNode(num ,left_tree , right_tree);
+            }
+            return bulid(0, preorder.length-1,0);
+        };
+        console.log(buildTree(preorder = [3,9,20,15,7], inorder = [9,3,15,20,7]))//[3,9,20,null,null,15,7]
+        console.log(buildTree(preorder = [-1], inorder = [-1]))//[-1]
+        console.log(buildTree(preorder = [3,1,2,4], inorder = [1,2,3,4]))//[3,1,4,null,2]
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

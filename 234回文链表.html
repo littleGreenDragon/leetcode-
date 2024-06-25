@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>234回文链表</title>
+    <meta name="description" content="给你一个单链表的头节点 head ，请你判断该链表是否为
+    回文链表。如果是，返回 true ；否则，返回 false 。">
+    <script>
+                /**
+         * Definition for singly-linked list.
+         * function ListNode(val, next) {
+         *     this.val = (val===undefined ? 0 : val)
+         *     this.next = (next===undefined ? null : next)
+         * }
+         */
+         function ListNode(val, next) {
+            this.val = (val===undefined ? 0 : val)
+            this.next = (next===undefined ? null : next)
+        }
+        function create_list(list){
+            let l_head = null;
+            let l_tail;
+            let in_number;
+            for(let i = 0; i < list.length; i++)
+            {
+                in_number = list[i];
+                if(! l_head){
+                    l_head = new ListNode(in_number, undefined);
+                    l_tail = l_head;
+                }else{
+                    l_tail.next = new ListNode(in_number, undefined);
+                    l_tail = l_tail.next;
+                }
+            }
+            return l_head;
+        }
+        /**
+         * @param {ListNode} head
+         * @return {boolean}
+         */
+        var isPalindrome = function(head) {
+            // A -> B      A <- B
+            // A -> B -> C  A -> B <- C
+            //先使用快慢指针找到中间点，如果是奇数，slow就在C，偶数就在B 
+            if(!(head && head.next)){
+                return true;
+            }
+            let fast = head;
+            let slow = head;
+            while(fast.next && fast.next.next){
+                fast = fast.next.next;
+                slow = slow.next;
+            }
+            //翻转slow后面的链表
+            function reverse(first, second){
+                if(! second) return first;
+                let head = reverse(second,second.next);
+                second.next = first;
+                return head;
+            }
+            let reverse_head = reverse(slow, slow.next);
+            slow.next = null;
+            while(head){
+                if(head.val != reverse_head.val) return false;
+                head = head.next;
+                reverse_head = reverse_head.next;
+            }
+            return true;
+        };
+
+        console.log(isPalindrome(create_list([1,2,2,1])));
+        console.log(isPalindrome(create_list([1,2,3,2,1])));
+        console.log(isPalindrome(create_list([1,3,3,2,1])));
+        console.log(isPalindrome(create_list([1,2])));
+        console.log(isPalindrome(create_list([1])));
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

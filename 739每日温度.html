@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>739每日温度</title>
+    <meta name="description" content="给定一个整数数组 temperatures ，表示每天的温度，返回一个数组 answer ，其中 answer[i] 是指对于第 i 天，下一个更高温度出现在几天后。如果气温在这之后都不会升高，请在该位置用 0 来代替。">
+    <script>
+        /**
+         * @param {number[]} temperatures
+         * @return {number[]}
+         */
+        var dailyTemperatures = function(temperatures) {
+            if(temperatures.length == 0) return [];
+            let stack = [[temperatures[0],0]];
+            let res = [];
+            for(let i=1;i<temperatures.length;i++){
+                //对于每个数，把比自己小的弹栈，计算其位置
+                while(stack.length>0 && temperatures[i] > stack.at(-1)[0]){
+                    let num_index = stack.pop();
+                    res[num_index[1]] = i-num_index[1];
+                }
+                stack.push([temperatures[i], i]);//将自己加入
+            }
+            while(stack.length>0){
+                res[stack.pop()[1]] = 0;
+            }
+            return res;
+        };
+        console.log(dailyTemperatures([73,74,75,71,69,72,76,73]));//[1,1,4,2,1,1,0,0]
+        console.log(dailyTemperatures([30,40,50,60]));// [1,1,1,0]
+        console.log(dailyTemperatures([30,60,90]));//[1,1,0]
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

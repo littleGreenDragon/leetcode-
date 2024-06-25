@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>最长回文子串</title>
+    <meta name="description" content="给你一个字符串 s，找到 s 中最长的 
+    回文子串。">
+    <script>
+        /**
+         * @param {string} s
+         * @return {string}
+         */
+        var expand1 = function(s, left, right){
+            //s就算只有一个字符，也会返回本身，所以longestPalindrome1中max_length可以写0起始
+            while(left >= 0 && right < s.length){
+                if(s[left] != s[right]){
+                    break;
+                }else{
+                    left --;
+                    right ++;
+                }
+            }
+            return [left+1, right-1, right - left + 1];
+        };
+        var longestPalindrome1 = function(s) {
+            let max_length = 0;
+            let bound;
+            let return_bound;
+            for(let i = 0; i < s.length; i++){
+                return_bound = expand1(s, i-1, i+1);
+                return_length = return_bound[2];
+                if(return_length > max_length){
+                    bound = return_bound;
+                    max_length = return_length;
+                }
+                return_bound = expand1(s, i-1, i);
+                return_length = return_bound[2];
+                if(return_length > max_length){
+                    bound = return_bound;
+                    max_length = return_length;
+                }
+            }
+            return s.slice(bound[0], bound[1] + 1);
+        };
+        var longestPalindrome2 = function(s) {
+            let start = 0;
+            let max_length = 1;
+            function expand2(left, right){
+                while(left >= 0 && right < s.length && s[left] == s[right]){//越界的时候不会修改max_length，即只有一个字符时，所以max_length必须从1开始
+                    if(right - left + 1 > max_length){
+                        max_length = right - left + 1;
+                        start = left;
+                    }
+                    left --;
+                    right ++;
+                }
+            }
+            for(let i = 0; i < s.length; i++){
+                expand2(i - 1, i + 1);
+                expand2(i - 1, i);
+            }
+            return s.slice(start, start + max_length);
+        };
+
+        console.log(longestPalindrome1("babad"));
+        console.log(longestPalindrome1("cbbd"));
+        console.log(longestPalindrome1("a"));
+
+        console.log(longestPalindrome2("babad"));
+        console.log(longestPalindrome2("cbbd"));
+        console.log(longestPalindrome2("a"));
+        console.log(longestPalindrome2("ac"));
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

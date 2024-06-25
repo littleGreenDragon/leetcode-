@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>215数组中的第K个最大的元素</title>
+    <meta name="description" content="给定整数数组 nums 和整数 k，请返回数组中第 k 个最大的元素。
+    请注意，你需要找的是数组排序后的第 k 个最大的元素，而不是第 k 个不同的元素。
+    你必须设计并实现时间复杂度为 O(n) 的算法解决此问题。">
+    <script>
+        //8:10-8:41
+        var findKthLargest = function(nums, k) {
+            class Heap{
+                constructor(compare){
+                    this.compare = compare;
+                    this.data = [];
+                    this.length = 0;
+                }
+                bubble_up(i){
+                    let parent = Math.floor((i-1)/2);
+                    while(parent>=0 && this.compare(this.data[parent], this.data[i])<0){
+                        [this.data[parent],this.data[i]] = [this.data[i], this.data[parent]];
+                        i = parent;
+                        parent = Math.floor((i-1)/2);
+                    }
+                }
+                put(num){
+                    this.data[this.length++] = num;
+                    this.bubble_up(this.length-1);
+                }
+                sink(i){
+                    let left_child = (2*i)+1;
+                    while(left_child < this.length){
+                        let right_child = (2*i)+2;
+                        let max_child = left_child;
+                        if(right_child < this.length && this.compare(this.data[left_child], this.data[right_child])<0){
+                            max_child = right_child;
+                        }
+                        if(this.compare(this.data[i], this.data[max_child])<0){
+                            [this.data[i], this.data[max_child]] = [this.data[max_child], this.data[i]];
+                            i = max_child;
+                            left_child = (2*i)+1;
+                        }else{
+                            break;
+                        }
+                    }
+                }
+                pop(){
+                    let res = this.data[0];
+                    [this.data[0], this.data[this.length-1]] = [this.data[this.length-1], this.data[0]];
+                    this.length--;
+                    this.sink(0);
+                    return res;
+                }
+                top(){
+                    return this.data[0];
+                }
+                print(){
+                    let res = [];
+                    let num = this.length;
+                    for(let i=0;i<num;i++){
+                        res.push(this.pop());
+                    }
+                    return res;
+                }
+            }
+            let heap = new Heap((a,b)=>{//用一个小根堆
+                return b-a;
+            });
+            for(let i=0;i<k;i++){
+                heap.put(nums[i]);
+            }
+            //如果数比小根堆的堆顶小的话就不用更新堆
+            for(let i=k;i<nums.length;i++){
+                if(heap.top() < nums[i]){
+                    heap.pop();
+                    heap.put(nums[i]);
+                }
+            }
+            //返回第k个大的
+            return heap.top();
+        };
+        console.log(findKthLargest([3,2,1,5,6,4],2));//5
+        console.log(findKthLargest([3,2,3,1,2,4,5,5,6],4));//4
+        console.log(findKthLargest([-1,2,1],1));//2
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

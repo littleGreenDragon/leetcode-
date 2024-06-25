@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>121买股票的最佳时机</title>
+    <meta name="description" content="给定一个数组 prices ，它的第 i 个元素 prices[i] 表示一支给定股票第 i 天的价格。你只能选择 某一天 买入这只股票，并选择在 未来的某一个不同的日子 卖出该股票。设计一个算法来计算你所能获取的最大利润。返回你可以从这笔交易中获取的最大利润。如果你不能获取任何利润，返回 0 。">
+    <script>
+        /**
+         * @param {number[]} prices
+         * @return {number}
+         */
+        var maxProfit1 = function(prices) {//为每个位置求出从左到本位置的最小值和从右到本位置的最大值，相减就是该位置的最大值
+            let min = [prices[0]];
+            let max = [];
+            max[prices.length-1] = prices[prices.length-1];
+            for(let i=1;i<prices.length;i++){
+                min[i] = Math.min(min[i-1], prices[i]);
+            }
+            for(let i=prices.length-2;i>=0;i--){
+                max[i] = Math.max(max[i+1], prices[i]);
+            }
+            let res = -Number.MAX_VALUE;
+            for(let i=0;i<prices.length;i++){
+                res = Math.max(res, max[i]-min[i]);
+            }
+            return res>0? res: 0;
+        };
+        var maxProfit2 = function(prices) {//假设某天是卖出点，记录卖出点之前的最低价，算出当天的盈利，最后返回最大盈利值
+            let min = prices[0];
+            let res = -Number.MAX_VALUE;
+            for(let i=1;i<prices.length;i++){
+                if(min> prices[i]){
+                    min = prices[i];
+                }else{
+                    res = Math.max(res, prices[i]-min);   
+                }
+            }
+            return res>0? res:0;
+        };
+        
+        console.log(maxProfit1([7,1,5,3,6,4]));//5
+        console.log(maxProfit1([7,6,4,3,1]));//0
+
+        console.log(maxProfit2([7,1,5,3,6,4]));//5
+        console.log(maxProfit2([7,6,4,3,1]));//0
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

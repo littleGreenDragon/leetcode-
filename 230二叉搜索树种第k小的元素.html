@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>230二叉搜索树种第K小的元素</title>
+    <script>
+        /**
+         * Definition for a binary tree node.
+         * function TreeNode(val, left, right) {
+         *     this.val = (val===undefined ? 0 : val)
+         *     this.left = (left===undefined ? null : left)
+         *     this.right = (right===undefined ? null : right)
+         * }
+         */
+        function TreeNode(val, left, right){
+            this.val = val==undefined ? 0:val;
+            this.left = left==undefined ? null:left;
+            this.right = right==undefined ? null:right;
+        }
+        function create_tree(list){
+            if(list.length == 0){
+                return null;
+            }
+            let root = new TreeNode(list[0]);
+            let stack = [root];
+            for(let i=1;i<list.length;i+=2){
+                let parent = stack.shift();
+                if(list[i] != null){
+                    parent.left = new TreeNode(list[i]);
+                    stack.push(parent.left);
+                }
+                if(i+1<list.length && list[i+1] != null){
+                    parent.right = new TreeNode(list[i+1]);
+                    stack.push(parent.right);
+                }
+            }
+            return root;
+        }
+        /**
+         * @param {TreeNode} root
+         * @param {number} k
+         * @return {number}
+         */
+        var kthSmallest = function(root, k) {
+            let stack = [];
+            let i = 0;
+            while(stack.length>0 || root){
+                while(root != null){
+                    stack.push(root);
+                    root = root.left;
+                }
+                let parent = stack.pop();
+                i++;
+                if(i==k){
+                    return parent.val;
+                }
+                root = parent.right;
+            }
+        };  
+        console.log(kthSmallest(create_tree([3,1,4,null,2]), k = 1));//1
+        console.log(kthSmallest(create_tree([5,3,6,2,4,null,null,1]), k = 3));//3
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

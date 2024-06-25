@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>49字母异位词分组</title>
+    <meta name="description" content="给你一个字符串数组，请你将 字母异位词 组合在一起。可以按任意顺序返回结果列表。字母异位词 是由重新排列源单词的所有字母得到的一个新单词。">
+    <script>
+        /**
+         * @param {string[]} strs
+         * @return {string[][]}
+         * 1 <= strs.length <= 104
+         * 0 <= strs[i].length <= 100
+         * strs[i] 仅包含小写字母
+         */
+        var groupAnagrams1 = function(strs) {
+            //对每个元素进行排序，将排序后的结果从map中进行判断后返回
+            let str_map = new Map();
+            for(let str of strs){
+                let str_list = str.split('');
+                str_list.sort(function(char1, char2){
+                    return char1.localeCompare(char2);
+                });
+                let sort_str = str_list.join('');
+                if(str_map.has(sort_str)){
+                    let temp = str_map.get(sort_str);
+                    temp.push(str);
+                    str_map.set(sort_str, temp);
+                }else{
+                    str_map.set(sort_str, [str]);
+                }
+            }
+            return Array.from(str_map.values());
+        };
+        var groupAnagrams2 = function(strs) {
+            let result = new Object();
+            for(let str of strs){
+                let cont_array = new Array(26).fill(0);
+                for(let s of str){
+                    cont_array[s.charCodeAt() - 'a'.charCodeAt()]++;
+                }
+                result[cont_array]? result[cont_array].push(str) : result[cont_array] = [str];
+            }
+            return Object.values(result);//这里不能用Array.from因为result不是可迭代对象
+        };
+        var groupAnagrams3 = function(strs) {//map的键可以是对象等任意类型，并且是严格比对，因此不同对象作为键不能获取同一个元素，但是使用Object，将对象作为键时会调用其toString方法转化对象成字符串，那么就实现了equal
+            let result = new Map();
+            for(let str of strs){
+                let cont_array = new Array(26).fill(0);
+                for(let s of str){
+                    cont_array[s.charCodeAt() - 'a'.charCodeAt()]++;
+                }
+                let cont_array_string = cont_array.join(' ');
+                if(result.has(cont_array_string)){
+                    let temp = result.get(cont_array_string);
+                    temp.push(str);
+                    result.set(cont_array_string, temp);
+                }else{
+                    result.set(cont_array_string, [str]);
+                }
+            }
+            return Array.from(result.values());
+        };
+
+
+        console.log(groupAnagrams1(["eat", "tea", "tan", "ate", "nat", "bat"]));
+        console.log(groupAnagrams1([""]));
+        console.log(groupAnagrams1(["a"]));
+
+        console.log(groupAnagrams2(["eat", "tea", "tan", "ate", "nat", "bat"]));
+        console.log(groupAnagrams2([""]));
+        console.log(groupAnagrams2(["a"]));
+
+        console.log(groupAnagrams3(["eat", "tea", "tan", "ate", "nat", "bat"]));
+        console.log(groupAnagrams3([""]));
+        console.log(groupAnagrams3(["a"]));
+
+
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

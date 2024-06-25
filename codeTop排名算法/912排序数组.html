@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>912排序数组</title>
+    <meta name="description" content="给你一个整数数组 nums，请你将该数组升序排列。">
+    <script>
+        
+        /**
+         * 9:27
+         * @param {number[]} nums
+         * @return {number[]}
+         */
+        var sortArray = function(nums) {
+            function patition(start, end){
+                let pivot = nums[start];
+                let left = start;
+                let right = end;
+                let mid = left;
+                while(mid <= right){
+                    if(nums[mid]> pivot){
+                        [nums[mid], nums[right]] = [nums[right], nums[mid]];
+                        right--;
+                    }else if (nums[mid] < pivot){
+                        [nums[mid], nums[left]] = [nums[left], nums[mid]];
+                        left++;
+                    }else{
+                        mid++;
+                    }
+                }
+                return [left-1,right+1];
+            }
+            function quick_sort(start, end){
+                let [first, second] = patition(start, end);
+                if(first>start) quick_sort(start, first);
+                if(end>second) quick_sort(second, end);
+            }
+            quick_sort(0,nums.length-1);
+            return nums;
+        };
+        console.log(sortArray([5,2,3,1]));//[1,2,3,5]
+        console.log(sortArray([5,1,1,2,0,0]));//[0,0,1,1,2,5]
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

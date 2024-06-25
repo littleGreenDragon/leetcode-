@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5最长回文子串</title>
+    <meta name="description" content="给你一个字符串 s，找到 s 中最长的 
+    回文子串
+    。">
+    <script>
+        /**
+         * 8:02-8:08
+         * @param {string} s
+         * @return {string}
+         */
+        var longestPalindrome = function(s) {
+            let dp = Array.from({length:s.length},()=>{
+                return new Array(s.length);
+            });
+            let res = s[0];
+            for(let i=1;i<=s.length;i++){//控制长度
+                for(let j=0;j+i-1<s.length;j++){
+                    if(i==1){
+                        dp[j][j+i-1] = true;
+                    }else if(i==2){
+                        dp[j][j+i-1] = s[j]==s[j+i-1];
+                    }else{
+                        dp[j][j+i-1] = dp[j+1][j+i-2] && (s[j]==s[j+i-1]);
+                    }
+                    if(dp[j][j+i-1] && i>res.length){
+                        res = s.slice(j,j+i);
+                    }
+                }
+            }
+            return res;
+        };
+        console.log(longestPalindrome("babad"));//'bab'或'aba'
+        console.log(longestPalindrome("cbbd"));//'bb'
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

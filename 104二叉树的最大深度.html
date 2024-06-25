@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>104二叉树的最大深度</title>
+    <meta name="description" content="给定一个二叉树 root ，返回其最大深度。二叉树的 最大深度 是指从根节点到最远叶子节点的最长路径上的节点数。">
+    <script>
+        /**
+         * Definition for a binary tree node.
+         * function TreeNode(val, left, right) {
+         *     this.val = (val===undefined ? 0 : val)
+         *     this.left = (left===undefined ? null : left)
+         *     this.right = (right===undefined ? null : right)
+         * }
+         */
+        function TreeNode(val,left,right){
+            this.val = val==undefined? 0:val;
+            this.left = left==undefined? null:left;
+            this.right = right==undefined?null:right;
+        }
+        let create_tree = function(list){
+            if(list.length ==0) return null;
+            let root = new TreeNode(list[0]);
+            let queue = [root];//等待添加子节点的队列
+            for(let i=1;i<list.length;i+=2){
+                let parent = queue.shift();
+                if(list[i] != null) {
+                    parent.left = new TreeNode(list[i]);
+                    queue.push(parent.left);
+                }
+                if(i+1<list.length && list[i+1] != null) {
+                    parent.right = new TreeNode(list[i+1]);
+                    queue.push(parent.right);
+                }
+            }
+            return root;
+        }
+        /**
+         * @param {TreeNode} root
+         * @return {number}
+         */
+        var maxDepth = function(root) {//深度优先搜索
+            function dfs(root, depth){
+                if(root == null) return depth;
+                return Math.max(dfs(root.left, depth+1), dfs(root.right, depth+1));
+            }
+            return dfs(root, 0);
+        };
+        var maxDepth1 = function(root) {//深度优先搜索,使用前序遍历搜索深度，每次栈中记录搜索深度，方便回溯
+            let max = 0;
+            let temp_max = 0;
+            let stack = [];
+            while(stack.length>0 || root){
+                while(root != null){
+                    temp_max += 1;
+                    stack.push([root, temp_max]);
+                    root = root.left;
+                }
+                max = Math.max(max, temp_max);
+                let parent_depth = stack.pop();
+                temp_max = parent_depth[1];
+                root = parent_depth[0].right;
+            }
+            return max;
+        };
+        var maxDepth2 = function(root) {//广度优先搜索
+            if(root == null) return 0;
+            let queue = [root];
+            let depth = 0;
+            let next_floor = 1;//记录每一层有多少个节点，每次将同一层的弹出
+            while(queue.length >0){
+                depth++;
+                let num = next_floor;
+                next_floor = 0;
+                for(let i=0;i<num;i++){
+                    let parent = queue.shift();
+                    if(parent.left != null){
+                        queue.push(parent.left);
+                        next_floor++;
+                    }
+                    if(parent.right != null){
+                        queue.push(parent.right);
+                        next_floor++;
+                    }
+                }
+            }
+            return depth;
+        };
+
+        /*
+                 3
+                9 20
+            null null 15 7
+        */
+        console.log(maxDepth(create_tree([3,9,20,null,null,15,7])));//3
+        console.log(maxDepth(create_tree([1,null,2])));//2
+
+        console.log(maxDepth1(create_tree([3,9,20,null,null,15,7])));//3
+        console.log(maxDepth1(create_tree([1,null,2])));//2
+
+        console.log(maxDepth2(create_tree([3,9,20,null,null,15,7])));//3
+        console.log(maxDepth2(create_tree([1,null,2])));//2
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

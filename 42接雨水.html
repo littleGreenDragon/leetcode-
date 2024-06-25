@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>42接雨水</title>
+    <meta name="description" content="给定 n 个非负整数表示每个宽度为 1 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。">
+    <script>
+        /**
+         * @param {number[]} height
+         * @return {number}
+         */
+        var trap1 = function(height) {
+            if(height.length <= 1) return 0;
+            let left = 0;//指针分布在两端
+            let right = height.length - 1;
+            let left_max = height[left];
+            let right_max = height[right];
+            let area = 0;
+            while(left < right){
+                if(height[left] < height[right]){//左边有坑
+                    area += (left_max - height[left]);
+                    left ++;
+                    left_max = Math.max(left_max, height[left]);
+                }else{//右边有坑
+                    area += (right_max - height[right]);
+                    right --;
+                    right_max = Math.max(right_max, height[right]);
+                }
+            }
+            return area;
+        };
+        /**
+         * @param {number[]} height
+         * @return {number}
+         */
+        var trap2 = function(height) {//使用栈，用于获取
+            if(height.length <= 1) return 0;
+            let start = 0;
+            let area = 0;
+            let stack = [];
+            while(start < height.length){
+                while(stack.length > 0 && height[stack.at(-1)] < height[start]){//发现右边界，可能有坑
+                    let top = stack.pop();
+                    if(stack.length == 0 || height[stack.at(-1)] < height[top]){//如果没有左边界（越界了没有左边界）或者还没找到左边界，继续弹栈
+                        continue;
+                    }
+                    //存在左边界，计算面积,把这个坑填平，后续不会再重复计算这个部分
+                    let water_height = (Math.min(height[stack.at(-1)], height[start])) - height[top];
+                    let water_width = start - stack.at(-1) - 1;
+                    area += water_height * water_width;
+                }
+                stack.push(start);
+                start ++;
+            }
+            return area;
+        };
+        /**
+         * @param {number[]} height
+         * @return {number}
+         */
+        var trap3 = function(height) {//使用动态规划,用两个数组，记录每个位置的左边界和右边界
+            if(height.length <= 1) return 0;
+            let left_max = new Array(height.length).fill(-1);
+            let right_max = new Array(height.length).fill(-1);
+            for(let i = 0; i < height.length; i++){//计算出每个柱子的左右边界
+                if((i - 1 >= 0 && left_max[i-1] < height[i]) || i == 0){
+                    left_max[i] = height[i];
+                }else{
+                    left_max[i] = left_max[i-1];
+                }
+                let right_index = height.length - i - 1;
+                if((right_index + 1 < height.length && right_max[right_index + 1]) < height[right_index] || right_index == height.length -1){
+                    right_max[right_index] = height[right_index];
+                }else{
+                    right_max[right_index] = right_max[right_index + 1];
+                }
+            }
+            let area = 0;//每根柱子，左右边界的高度减去本身的高度就是水高
+            for(let i = 0; i < height.length; i++){
+                area = area + Math.min(left_max[i], right_max[i]) - height[i];
+            }
+            return area;
+        };
+
+        console.log(trap1([0,1,0,2,1,0,1,3,2,1,2,1]));//6
+        console.log(trap1([4,2,0,3,2,5]));//9
+        console.log(trap1([4,2,3]));//1
+
+        console.log(trap2([0,1,0,2,1,0,1,3,2,1,2,1]));//6
+        console.log(trap2([4,2,0,3,2,5]));//9
+        console.log(trap2([4,2,3]));//1
+
+        console.log(trap3([0,1,0,2,1,0,1,3,2,1,2,1]));//6
+        console.log(trap3([4,2,0,3,2,5]));//9
+        console.log(trap3([4,2,3]));//1
+        console.log(trap3([0,2,0]));//0
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

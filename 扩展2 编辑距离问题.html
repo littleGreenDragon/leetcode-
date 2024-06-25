@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>扩展2编辑距离问题</title>
+    <meta name="description" content="输入两个字符串 s和 t，返回将 s转换为t所需的最少编辑步数。你可以在一个字符串中进行三种编辑操作：插入一个字符、删除一个字符、将字符替换为任意一个字符。">
+    <script>
+        let min = function(s,t){//dp[i][j]表示s的前i个字符和t的前j个字符相等时要经历的步骤，i表示s在某个字符位置要执行的操作，j表示t中参与比对的字符
+            let dp = Array.from({length:s.length+1}, ()=>{
+                return new Array();
+            });//生成一个二维数组，不能使用new Array(n).fill([])。这会使每一行都是同一个[]对象
+            dp[0][0] = 0;//在s和t长度都为0时，需要0步
+            for(let j=1;j<=t.length;j++){//在s=0时，需要经过t个插入步骤
+                dp[0][j] = j;
+            }
+            for(let i=1;i<=s.length;i++){//在t=0时，需要经过s个删除步骤
+                dp[i][0] = i;
+            }
+            for(let i=1;i<=s.length;i++){
+                for(let j=1;j<=t.length;j++){
+                    if(s[i-1] != t[j-1]){//两个字符不相同，说明要执行操作
+                        let del = dp[i-1][j];//删除一个s的字符
+                        let change = dp[i-1][j-1];//替换一个t[j-1]字符
+                        let ins = dp[i][j-1];//插入一个t[j-1]的字符到s
+                        dp[i][j] = Math.min(del, change, ins)+1;
+                    }else{//相同不需要操作，那么和上一个字符的操作数一样
+                        dp[i][j] = dp[i-1][j-1];
+                    }
+                }
+            }
+            return dp[s.length][t.length];
+        }
+        let min1 = function(s,t){//压缩dp数组，因为dp的更新只用上正上、斜上和左侧，所以可以省略第一维，从后往前无法获取左侧，从前往后会丢失斜上，所以决定使用一个临时变量保存斜上，然后从后往前更新
+            let dp = new Array(t.length+1);
+            dp[0] = 0;//在s和t长度都为0时，需要0步
+            for(let j=1;j<=t.length;j++){//在s=0时，需要经过t个插入步骤
+                dp[j] = j;
+            }
+            for(let i=1;i<=s.length;i++){
+                let tmp = dp[0];//记录斜上
+                dp[0] =  i;//s!=0 t=0时，要经过s次删除操作
+                for(let j=1;j<=t.length;j++){
+                    let tmp2 = dp[j];
+                    if(s[i-1] != t[j-1]){//两个字符不相同，说明要执行操作
+                        dp[j] = Math.min(tmp, dp[j], dp[j-1])+1;
+                    }else{//相同不需要操作，那么和上一个字符的操作数一样
+                        dp[j] = tmp;
+                    }
+                    tmp = tmp2;
+                }
+            }
+            return dp[t.length];
+        }
+        console.log(min('bag', 'pack'));//3
+        console.log(min1('bag', 'pack'));//3
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

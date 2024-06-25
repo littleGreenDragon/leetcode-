@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>32最长有效括号</title>
+    <meta name="description" content="给你一个只包含 '(' 和 ')' 的字符串，找出最长有效（格式正确且连续）括号子串的长度。">
+    <script>
+        /**
+         * @param {string} s
+         * @return {number}
+         */
+        var longestValidParentheses = function(s) {//从左到右遍历，记录左右括号数，一旦左右括号数一样就说明组成一组有效括号，如果右括号数大于左括号说明前面记录的清零了；从右到左也算一遍
+            let max = 0;
+            let left = 0;
+            let right = 0;
+            let temp_sum =  0;
+            for(let i=0;i<s.length;i++){
+                s[i] == '('? left++:right++;
+                if(left==right){
+                    temp_sum += left*2;
+                    max = Math.max(max, temp_sum);
+                    left = right = 0;
+                }else if(right>left){
+                    left = right = temp_sum = 0;
+                }
+            }
+            left = right = temp_sum = 0;
+            for(let i=s.length-1;i>=0;i--){
+                s[i] == '('? left++:right++;
+                if(left==right){
+                    temp_sum += left*2;
+                    max = Math.max(max, temp_sum);
+                    left = right = 0;
+                }else if(right<left){
+                    left = right = temp_sum = 0;
+                }
+            }
+            return max;
+        };
+        var longestValidParentheses1 = function(s) {//动态规划
+            let dp = new Array(s.length).fill(0);//表示以s的某个位置结尾的最大连续匹配括号个数
+            dp[0] = 0;
+            let max = 0;
+            for(let i=1;i<s.length;i++){
+                if(s[i] == ')'){//如果是右括号，找与其匹配的左括号
+                    if(s[i-1] == '('){//匹配到了一对（），那么长度是（）前一个位置的最大长度加2
+                       dp[i] =  i-2>=0? dp[i-2]+2 : 2;
+                    }else{//说明是)，需要判断是否有匹配的(
+                        if(s[i-dp[i-1]-1]=='('){//有匹配的括号
+                            dp[i] = i-dp[i-1]-2>=0 ? dp[i-1]+dp[i-dp[i-1]-2]+2 : dp[i-1]+2;//判断是否存在前序匹配的括号
+                        }
+                    }
+                    max = Math.max(max, dp[i]);
+                }
+            }
+            return max;
+        };
+        console.log(longestValidParentheses("(()"));//2
+        console.log(longestValidParentheses(")()())"));//4
+        console.log(longestValidParentheses(""));//0
+        console.log(longestValidParentheses("()"));//2
+
+        console.log(longestValidParentheses1("(()"));//2
+        console.log(longestValidParentheses1(")()())"));//4
+        console.log(longestValidParentheses1(""));//0
+        console.log(longestValidParentheses1("()"));//2
+        console.log(longestValidParentheses1("()(())"));//6
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

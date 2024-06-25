@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>112路径总和</title>
+    <meta name="description" content="给你二叉树的根节点 root 和一个表示目标和的整数 targetSum 。判断该树中是否存在 根节点到叶子节点 的路径，这条路径上所有节点值相加等于目标和 targetSum 。如果存在，返回 true ；否则，返回 false 。
+
+    叶子节点 是指没有子节点的节点。">
+    <script>
+        /**
+         * Definition for a binary tree node.
+         * function TreeNode(val, left, right) {
+         *     this.val = (val===undefined ? 0 : val)
+         *     this.left = (left===undefined ? null : left)
+         *     this.right = (right===undefined ? null : right)
+         * }
+         */
+        function TreeNode(val, left, right){
+            this.val = val==undefined? 0:val;
+            this.left = left==undefined? null:left;
+            this.right = right==undefined? null:right;
+        }
+        function create_tree(list){
+            if(list.length == 0){
+                return null;
+            }
+            let root = new TreeNode(list[0]);
+            let queue = [root];
+            for(let i=1;i<list.length;i+=2){
+                let parent = queue.shift();
+                if(list[i]!=null){
+                    parent.left = new TreeNode(list[i]);
+                    queue.push(parent.left);
+                }
+                if( i+1<list.length&&list[i+1]!=null){
+                    parent.right = new TreeNode(list[i+1]);
+                    queue.push(parent.right);
+                }
+            }
+            return root;
+        }
+        /**
+         * @param {TreeNode} root
+         * @param {number} targetSum
+         * @return {boolean}
+         */
+        var hasPathSum = function(root, targetSum) {//使用dfs
+            function calcu(list){
+                let sum = list[0];
+                for(let i=1;i<list.length;i++){
+                    sum += list[i];
+                }
+                if(sum == targetSum) return true;
+                return false;
+            }
+            function search_leaf(root,stack){
+                stack.push(root.val);
+                if(root.left == null && root.right == null){
+                    if(calcu(stack)){
+                        return true;
+                    }
+                    return false;
+                }
+                let result = false;
+                if(root.left != null){
+                    result = result || search_leaf(root.left, stack);
+                    stack.pop();
+                }
+                if(root.right != null){
+                    result = result || search_leaf(root.right, stack);
+                    stack.pop();
+                }
+                return result;
+            }
+            if(root == null) return false;
+            return search_leaf(root, []);
+        };
+        var hasPathSum1 = function(root, targetSum) {//使用dfs，改进，不用每次到叶子节点都重头计算
+            function search_leaf(root,sum){
+                if(root.left == null && root.right == null){//叶子节点
+                    return sum == targetSum;
+                }
+                let result = false;
+                if(root.left != null){
+                    result = result || search_leaf(root.left, sum+root.left.val);
+                }
+                if(root.right != null){
+                    result = result || search_leaf(root.right, sum+root.right.val);
+                }
+                return result;
+            }
+            if(root == null) return false;
+            return search_leaf(root, root.val);
+        };
+
+        var hasPathSum2 = function(root, targetSum) {//使用bfs,不用记录完整的路径，只需要记录当前路径的值
+            if(root == null) return false;
+            let queue = [root];
+            let path_queue = [root.val];
+            while(queue.length>0){
+                let parent = queue.shift();
+                let path_sum = path_queue.shift();
+                if(parent.left == null && parent.right == null){
+                    if(path_sum == targetSum) return true;
+                    continue;
+                }
+                if(parent.left != null){
+                    path_queue.push(path_sum+parent.left.val);
+                    queue.push(parent.left)
+                }
+                if(parent.right != null){
+                    path_queue.push(path_sum+parent.right.val);
+                    queue.push(parent.right);
+                }
+            }
+            return false;
+        };
+
+        console.log(hasPathSum(create_tree([5,4,8,11,null,13,4,7,2,null,null,null,1]),22));//true
+        console.log(hasPathSum(create_tree([1,2,3]),5));//false
+
+        console.log(hasPathSum1(create_tree([5,4,8,11,null,13,4,7,2,null,null,null,1]),22));//true
+        console.log(hasPathSum1(create_tree([1,2,3]),5));//false
+
+        console.log(hasPathSum2(create_tree([5,4,8,11,null,13,4,7,2,null,null,null,1]),22));//true
+        console.log(hasPathSum2(create_tree([1,2,3]),5));//false
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

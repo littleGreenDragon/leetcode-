@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>扩展归并排序</title>
+    <script>
+        function mergeSort_topToBottom(arr, left=0, right=arr.length-1){//一直划分数组，直到数组的长度为1时返回,自顶向下
+            if(left == right) return;
+            let mid = Math.floor((left+right)/2);
+            mergeSort_topToBottom(arr, left, mid);
+            mergeSort_topToBottom(arr, mid+1, right);//执行到这一句时left==mid
+            merge_two_list(arr, left, mid, right);//执行最深层这一句时，left==mid, mid+1==right
+        }
+        function mergeSort_bottomToTop(arr, left=0, right=arr.length-1){//自底向上，每次拿到k个就合并
+            for(let i=1; i<arr.length; i+=i){//1 2 3 4 5 i=1,2,4
+                //控制一个列表中有多少个数时进行合并 1 2 4 8 16...，比如1表示两个长度为1的列表进行合并
+                for(let left=0;left < arr.length;left += 2*i){//i个一组，两两进行合并
+                    merge_two_list(arr, left, mid=left+i-1, right = Math.min(left+2*i-1, arr.length-1));
+                }
+            }
+        }
+        function merge_two_list(arr, left, mid, right){//这里不能写first second,即参数不能是两个数组的头，因为两个数组是不一定长度相等的，那么就不能用second作为first的尾，无法得知second的长度，比如arr是奇数，那么划分到末尾的时候，出现一组2个节点，一组1个节点，所以参数必须是left  right，即两个数组合并的边界
+            //1 2 3 mid = (0 + 2)/2 = 1 [1,2][3]
+            //1 2 3 4 mid = (0+3)/2 = 1 [1,2][3,4]->mid是第一组的结尾，mid+1是第二组的起始
+            let result = [];
+            let first_i = left;
+            let second_i = mid+1;
+            let result_i = left;
+            while(first_i<=mid && second_i<=right){
+                if(arr[first_i] > arr[second_i]){
+                    result[result_i++] = arr[second_i++];
+                }else{
+                    result[result_i++] = arr[first_i++];
+                }
+            }
+            while(first_i<=mid){//实际上一定是这种情况，second一定不会是多的那个
+                result[result_i++] = arr[first_i++];
+            }
+            while(second_i<=right){
+                result[result_i++] = arr[second_i++];
+            }
+            while(left <= right){
+                arr[left] = result[left];
+                left++;
+            }
+        }
+        let arr = [5,4,3,2,1];
+        mergeSort_topToBottom(arr);
+        console.log(arr);
+        arr = [6,1,2,5,4,3];
+        mergeSort_topToBottom(arr);
+        console.log(arr);
+        arr = [5,4,3,2,1];
+        mergeSort_bottomToTop(arr);
+        console.log(arr);
+        arr = [6,1,2,5,4,3];
+        mergeSort_bottomToTop(arr);
+        console.log(arr);
+    </script>
+
+</head>
+<body>
+    
+</body>
+</html>

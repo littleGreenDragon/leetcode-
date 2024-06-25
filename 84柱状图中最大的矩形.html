@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>84柱状图中最大的矩形</title>
+    <meta name="description" content="给定 n 个非负整数，用来表示柱状图中各个柱子的高度。每个柱子彼此相邻，且宽度为 1 。
+    求在该柱状图中，能够勾勒出来的矩形的最大面积。">
+    <script>
+        /**
+         * @param {number[]} heights
+         * @return {number}
+         */
+        var largestRectangleArea = function(heights) {//暴力求解，求出以某根柱子为高的最大面积,即以某柱子向两边进行扩展,超时
+            let max = 0;
+            for(let i=0;i<heights.length;i++){
+                let start = i;
+                while(start>=0 && heights[start]>=heights[i]){
+                    start--;
+                }
+                let end = i;
+                while(end<heights.length && heights[end]>=heights[i]){
+                    end++;
+                }
+                max = Math.max(max, heights[i] * (end-start-1));
+            }
+            return max;
+        };
+        var largestRectangleArea1 = function(heights) {//为了获取左右最近小于本柱子高度的柱子的位置，使用单调栈，遍历height,如果栈为空或遍历到的高度高于栈顶元素高度，那就入栈（说明栈内是单调递增的那么某个柱子的左边最近小于其的柱子）；如果碰到小于栈顶元素高度的，那么说明右边最近小于本柱子的柱子出现了，进行弹栈计算
+            heights.unshift(0);
+            heights.push(0);
+            let max = 0;
+            let stack = [];//元素是index
+            for(let i=0;i<heights.length;i++){
+                if(i==0 || heights[i] >= heights[stack.at(-1)]){
+                    stack.push(i);
+                    continue
+                }
+                //出现了右边最近小于
+                while(heights[stack.at(-1)]>heights[i]){//栈中比其大的都找到了最近右边界
+                    let width = (i-1) - (stack.at(-2)+1) + 1;
+                    max = Math.max(max, heights[stack.at(-1)] * width);
+                    stack.pop();
+                }
+                stack.push(i);
+            }
+            return max;
+        };
+        
+        console.log(largestRectangleArea([2,1,5,6,2,3]));//10
+        console.log(largestRectangleArea([2,4]));//4
+
+        console.log(largestRectangleArea1([2,1,5,6,2,3]));//10
+        console.log(largestRectangleArea1([2,4]));//4
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

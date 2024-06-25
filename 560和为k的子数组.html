@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>560和为K的子数组</title>
+    <meta name="description" content="给你一个整数数组 nums 和一个整数 k ，请你统计并返回 该数组中和为 k 的子数组的个数 。子数组是数组中元素的连续非空序列。">
+    <script>
+        /**
+         * @param {number[]} nums
+         * @param {number} k
+         * @return {number}
+         * 1 <= nums.length <= 2 * 104
+         * -1000 <= nums[i] <= 1000
+         * -107 <= k <= 107
+         */
+        var subarraySum1 = function(nums, k) {//暴力求解法,注意这个题不能通过累加，加到满足k就停止，因为存在负数，也就是说可能存在[1,1]=2 [1,1,-1,1] = 2的情况，所以end必须一直枚举到末尾
+            if(nums.length == 0) return 0;
+            let count = 0;
+            for(let start = 0; start < nums.length; start++){
+                let temp_count = 0;
+                for(let end = start; end < nums.length; end++){
+                    temp_count += nums[end];
+                    if(temp_count == k){
+                        count ++;
+                    }
+                }
+            }   
+            return count;
+        };
+        var subarraySum2 = function(nums, k) {//使用哈希表辅助，键是起点到i的总和，值是出现了几次，直接记录下来所有的累计值，然后通过累计值相减来获取是否存在满足条件；注意累计值是可能相同的，就比如[1,1] [1,1,-1,1] [1,1,0]等累计值都是2，那么需要记录某个累计值有几个
+            let nums_map = new Map();
+            nums_map.set(0,1);
+            let pre_sum = 0;
+            let count = 0;
+            for(let i = 0; i < nums.length; i++){
+                pre_sum += nums[i];//计算累计值
+                if(nums_map.has(pre_sum - k)){//如果存在子序列，把该子序列的个数记录下来，即满足合为K的子序列
+                    count += nums_map.get(pre_sum - k);
+                }
+                if(nums_map.has(pre_sum)){//将本序列添加
+                    nums_map.set(pre_sum, nums_map.get(pre_sum) + 1);
+                }else{
+                    nums_map.set(pre_sum, 1);
+                }
+            }
+            return count;
+        };
+
+        console.log(subarraySum1([1,1,1], 2));//2
+        console.log(subarraySum1([1,2,3], 3));//2
+
+        console.log(subarraySum2([1,1,1], 2));//2
+        console.log(subarraySum2([1,2,3], 3));//2
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

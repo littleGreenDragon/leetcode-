@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>76最小覆盖子串</title>
+    <meta name="description" content="给你一个字符串 s 、一个字符串 t 。返回 s 中涵盖 t 所有字符的最小子串。如果 s 中不存在涵盖 t 所有字符的子串，则返回空字符串">
+    <script>
+        /**
+         * @param {string} s
+         * @param {string} t
+         * @return {string}
+         */
+        var minWindow = function(s, t) {
+            let t_count = new Map();
+            let s_count = new Map();
+            for(let i = 0;i < t.length;i++){//获取t字符串的map
+                if(t_count.has(t[i])){
+                    t_count.set(t[i], t_count.get(t[i])+1);
+                }else{
+                    t_count.set(t[i], 1);
+                    s_count.set(t[i], 0);
+                }
+            }
+            let start = 0;
+            let end = 0;
+            let min_length, min_start, min_end;
+            function match(){//判断s的子串是否满足t的要求
+                for(let [key, value] of t_count.entries()){
+                    if(s_count.get(key) < value){
+                        return false;
+                    }
+                }
+                return true;
+            }
+            while(end <= s.length){//start到末尾的长度还有可能更小
+                //判断是否到包含了全部字符
+                if(match()){
+                    if(!min_length ||min_length > end-start){//记住长度和位置
+                        min_length = end-start;
+                        min_start = start;
+                        min_end = end;
+                    }
+                    if(t_count.has(s[start])){
+                        s_count.set(s[start], s_count.get(s[start])-1);
+                    }
+                    start ++;
+                }else{//没到右边界
+                    //添加字符，扩张右边界，直到包含t的全部字符
+                    if(t_count.has(s[end])){//只记录t中存在的字母的个数
+                        s_count.set(s[end], s_count.get(s[end])+1);
+                    }
+                    end++;
+                }
+            }
+            return min_length ? s.slice(min_start, min_end) : '';
+        };
+        console.log(minWindow("ADOBECODEBANC", "ABC"));//'BANC'
+        console.log(minWindow("a", "a"));//'a'
+        console.log(minWindow("a", "aa"));//''
+        console.log(minWindow("bbaa", "aba"));//'baa'
+        console.log(minWindow("aaaaaaaaaaaabbbbbcdd", "abcdd"));//"abbbbbcdd"
+    </script>
+
+</head>
+<body>
+    
+</body>
+</html>

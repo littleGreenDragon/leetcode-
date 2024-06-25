@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>20有效的括号</title>
+    <meta name="description" content="
+    给定一个只包括 '('，')'，'{'，'}'，'['，']' 的字符串 s ，判断字符串是否有效。
+
+    有效字符串需满足：
+    
+        左括号必须用相同类型的右括号闭合。
+        左括号必须以正确的顺序闭合。
+        每个右括号都有一个对应的相同类型的左括号。
+    " >
+    <script>
+        /**
+         * 6:20-6:24
+         * @param {string} s
+         * @return {boolean}
+         */
+        var isValid = function(s) {
+            let stack = [];
+            for(let i=0;i<s.length;i++){
+                if(s[i] == '[' || s[i] == '(' || s[i] == '{'){
+                    stack.push(s[i]);
+                }else{
+                    let temp = stack.pop();
+                    if((s[i] == ']' && temp == '[') || 
+                       (s[i] == '}' && temp == '{') ||
+                       (s[i] == ')' && temp == '(') ){
+                        continue;
+                    }else{
+                        return false;
+                    }
+                }
+            }
+            if(stack.length > 0) return false;
+            return true;
+        };
+        console.log(isValid("()"));//true
+        console.log(isValid("()[]{}"));//true
+        console.log(isValid("(]"));//true
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

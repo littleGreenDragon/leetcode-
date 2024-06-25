@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>扩展3 树</title>
+    <script>
+        function TreeNode(val, left, right){
+            this.val = val;
+            this.left = left==undefined? null:left;
+            this.right = right==undefined? null:right;
+        }
+        let create_tree = function(list){//使用队列，依次为队头的元素添加左右节点，并且将左右节点添加到队列中，和层次遍历一样
+            if(list.length == 0)return null;
+            let root = new TreeNode(list[0]);
+            let queue = [root];
+            for(let i=1;i<list.length;i+=2){
+                let parent = queue.shift();
+                if(list[i] != null){
+                    parent.left = new TreeNode(list[i]);
+                    queue.push(parent.left);
+                }
+                if(i+1<list.length && list[i+1] != null){
+                    parent.right = new TreeNode(list[i+1]);
+                    queue.push(parent.right);
+                }
+            }
+            return root;
+        }
+        let floor_visit = function(root){//层次遍历，从根节点开始，每次从队列中取出一个节点，读取其值，将其左右节点加到队列中
+            if(root == null) return [];
+            let queue = [root];
+            let res = [];
+            while(queue.length>0){
+                let parent = queue.shift();
+                res.push(parent.val);
+                if(parent.left != null) queue.push(parent.left);
+                if(parent.right != null) queue.push(parent.right);
+            }
+            return res;
+        }
+        let front_visit = function(root, res){//前序遍历，递归法
+            if(root == null) return;
+            res.push(root.val);
+            front_visit(root.left, res);
+            front_visit(root.right, res);
+        }
+        let front_visit_stack = function(root){//前序遍历，非递归法，使用栈，从根节点开始，每次弹出一个元素，读取其值，先将右子树压入栈中，然后将左子树压入栈中（最早使用的最后放到栈）
+            if(root == null) return [];
+            let stack = [root];
+            let res = [];
+            while(stack.length>0){
+                let parent = stack.pop();
+                res.push(parent.val);
+                if(parent.right != null) stack.push(parent.right);
+                if(parent.left != null) stack.push(parent.left);
+            }
+            return res;
+        }
+        let front_visit_stack2 = function(root){//前序遍历，非递归法，这个方法和中序遍历写法一样，只有输出位置不一样
+            if(root == null) return [];
+            let stack = [];
+            let res = [];
+            while(stack.length>0 || root){
+                while(root!=null){
+                    res.push(root.val);
+                    stack.push(root);
+                    root = root.left;
+                }
+                let parent = stack.pop();
+                root = parent.right;
+            }
+            return res;
+        }
+        let mid_visit = function(root, res){
+            if(root == null) return;
+            mid_visit(root.left, res);
+            res.push(root.val);
+            mid_visit(root.right, res);
+        }
+        let mid_visit_stack = function(root){
+            if(root == null) return [];
+            let stack = [];
+            let res = [];
+            while(stack.length>0 || root){
+                while(root){
+                    stack.push(root);
+                    root = root.left;
+                }
+                let parent = stack.pop();
+                res.push(parent.val);
+                root = parent.right;
+            }
+            return res;
+        }
+        let mid_visit_stack2 = function(root){
+            if(root == null) return [];
+            let stack = [];
+            let res = [];
+            while(stack.length>0 || root){
+                if(root != null){
+                    stack.push(root);
+                    root = root.left;
+                }else{
+                    let parent = stack.pop();
+                    res.push(parent.val);
+                    root = parent.right;
+                }
+            }
+            return res;
+        }
+        let back_visit_stack = function(root){//后续遍历等于根右左顺序的逆序
+            if(root == null) return [];
+            let res = [];
+            let stack = [root];
+            while(stack.length>0){
+                let parent = stack.pop();
+                res.unshift(parent.val);
+                if(parent.left != null) stack.push(parent.left);
+                if(parent.right != null) stack.push(parent.right);
+            }
+            return res;
+        }
+        let back_visit_stack2 = function(root){//后续遍历等于根右左顺序的逆序
+            if(root == null) return [];
+            let res = [];
+            let stack = [];
+            while(stack.length>0 || root){
+                while(root!=null){
+                    stack.push(root);
+                    res.unshift(root);
+                    root = root.right;
+                }
+                let parent = stack.pop();
+                root = parent.left;
+            }
+            return res;
+        }
+
+        console.log(floor_visit(create_tree([1,null,2,3])));//[1,2,3]
+        console.log(front_visit_stack(create_tree([1,null,2,3])));//[1,2,3]
+        console.log(front_visit_stack2(create_tree([1,null,2,3])));//[1,2,3]
+        console.log(mid_visit_stack(create_tree([1,null,2,3])));//[1,3,2]
+        console.log(mid_visit_stack2(create_tree([1,null,2,3])));//[1,3,2]
+        console.log(back_visit_stack(create_tree([1,null,2,3])));//[3,2,1]
+        console.log(back_visit_stack(create_tree([1,null,2,3])));//[3,2,1]
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

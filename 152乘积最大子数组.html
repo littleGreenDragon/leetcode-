@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>152乘积最大子数组</title>
+    <meta name="description" content="给你一个整数数组 nums ，请你找出数组中乘积最大的非空连续子数组（该子数组中至少包含一个数字），并返回该子数组所对应的乘积。测试用例的答案是一个 32-位 整数。">
+    <script>
+        /**
+         * @param {number[]} nums
+         * @return {number}
+         */
+        var maxProduct = function(nums) {//和最大连续子数组和的区别是负数和负数相乘会变成正数，使用一个数组存储从起点到i位置最大的乘积，使用一个数组存储从起点到i为止最小的乘积
+            let dp_max = new Array(nums.length);
+            let dp_min = new Array(nums.length);
+            dp_max[0] = nums[0];
+            dp_min[0] = nums[0];
+            let max = dp_max[0];
+            for(let i=1;i<nums.length;i++){//以每个位置为终点
+                dp_min[i] = Math.min(dp_min[i-1]*nums[i], dp_max[i-1]*nums[i], nums[i]);
+                dp_max[i] = Math.max(dp_max[i-1]*nums[i], dp_min[i-1]*nums[i], nums[i]);
+                max = Math.max(dp_max[i], max);
+            }
+            return max;
+        };
+        console.log(maxProduct([2,3,-2,4]))//6
+        console.log(maxProduct([-2,0,-1]))//0
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

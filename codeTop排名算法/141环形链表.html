@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>141环形链表</title>
+    <meta name="description" content="给你一个链表的头节点 head ，判断链表中是否有环。
+    如果链表中有某个节点，可以通过连续跟踪 next 指针再次到达，则链表中存在环。 为了表示给定链表中的环，评测系统内部使用整数 pos 来表示链表尾连接到链表中的位置（索引从 0 开始）。注意：pos 不作为参数进行传递 。仅仅是为了标识链表的实际情况。
+    如果链表中存在环 ，则返回 true 。 否则，返回 false 。">
+    <script>
+        /**
+         * Definition for singly-linked list.
+         * function ListNode(val) {
+         *     this.val = val;
+         *     this.next = null;
+         * }
+         */
+        function ListNode(val){
+            this.val = val;
+            this.next = null;
+        }
+        function create_list(list, pos){
+            if(list.length == 0) return null;
+            let head = new ListNode(list[0]);
+            let temp = head;
+            let circle_point;
+            if(pos == 0) circle_point = head;
+            for(let i=1;i<list.length;i++){
+                temp.next = new ListNode(list[i]);
+                temp = temp.next;
+                if(pos == i){
+                    circle_point = temp;
+                }
+                if(i==list.length-1){
+                    temp.next = circle_point;
+                }
+            }
+            return head;
+        }
+        /**
+         * 7:40-7:51
+         * @param {ListNode} head
+         * @return {boolean}
+         */
+        var hasCycle = function(head) {
+            if(head ==null) return false;
+            let fast = head;
+            let slow = head;
+            while(fast.next && fast.next.next){
+                fast = fast.next.next;
+                slow = slow.next;
+                if(fast == slow){
+                    return true;
+                }
+            }
+            return false;
+        };
+        console.log(hasCycle(create_list([3,2,0,-4],1)));//true
+        console.log(hasCycle(create_list([1,2],0)));//true
+        console.log(hasCycle(create_list([1],-1)));//false
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

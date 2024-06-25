@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>236二叉树的最近公共祖先</title>
+    <meta name="description" content="给定一个二叉树, 找到该树中两个指定节点的最近公共祖先。
+    百度百科中最近公共祖先的定义为：“对于有根树 T 的两个节点 p、q，最近公共祖先表示为一个节点 x，满足 x 是 p、q 的祖先且 x 的深度尽可能大（一个节点也可以是它自己的祖先）。”">
+    <script>
+        /**
+         * Definition for a binary tree node.
+         * function TreeNode(val) {
+         *     this.val = val;
+         *     this.left = this.right = null;
+         * }
+         */
+        function TreeNode(val, left, right){
+            this.val = val==undefined? 0:val;
+            this.left = left==undefined? null:left;
+            this.right = right==undefined? null:right;
+        }
+        function create_tree(list, p, q){//直接把两个数的路径找出来
+            if(list.length == 0) return null;
+            let p_node;
+            let q_node;
+            let root = new TreeNode(list[0]);
+            if(list[0] == p){
+                p_node = root;
+            }else if(list[0] == q){
+                q_node = root;
+            }
+            let queue = [root];
+            for(let i=1;i<list.length;i+=2){
+                let parent = queue.shift();
+                if(list[i] != null){
+                    parent.left = new TreeNode(list[i]);
+                    queue.push(parent.left);
+                    if(list[i] == p){
+                        p_node = parent.left;
+                    }else if(list[i] == q){
+                        q_node = parent.left;
+                    }
+                }
+                if(i+1<list.length && list[i+1]!=null){
+                    parent.right = new TreeNode(list[i+1]);
+                    queue.push(parent.right);
+                    if(list[i+1] == p){
+                        p_node = parent.right;
+                    }else if(list[i+1] == q){
+                        q_node = parent.right;
+                    }
+                }
+            }
+            return [root, p_node, q_node];
+        }
+        /**
+         * @param {TreeNode} root
+         * @param {TreeNode} p
+         * @param {TreeNode} q
+         * @return {TreeNode}
+         */
+        var lowestCommonAncestor = function(root, p, q) {//直接找到两个节点的从根节点到该节点的路径，比对两个路径即可
+            let temp = [];
+            function search(root, target, stack){
+                if(root == target){
+                    stack.push(root);
+                    temp.push(stack.slice());
+                }else{
+                    stack.push(root);
+                    if(root.left != null){
+                        search(root.left, target, stack);
+                        stack.pop();
+                    }
+                    if(root.right != null){
+                        search(root.right, target, stack);
+                        stack.pop();
+                    }
+                }
+            }
+            search(root, p, []);
+            search(root, q, []);
+            let i=0;
+            for(;i<temp[0].length && i<temp[1].length;i++){
+                if(temp[0][i] != temp[1][i]){
+                    break;
+                }
+            }
+            return temp[0][i-1];
+        };
+        var lowestCommonAncestor1 = function(root, p, q) {//递归，两个节点的最近公共祖先，只有两种情况，一个是两个节点分别处于两个子树，另一种是一个节点是另一个节点的父节点
+            let res;
+            function search(root){
+                if(root == null)return false;
+                let left = search(root.left);
+                let right = search(root.right);
+                if((left==true && right==true) || ((root==p||root==q) && (left==true || right==true))){
+                    res = root;
+                }
+                if(root == p || root == q) return true;
+                return left || right;
+            }
+            search(root);
+            return res;
+        };
+
+        console.log(lowestCommonAncestor(...create_tree([3,5,1,6,2,0,8,null,null,7,4],5,4)));//5
+        console.log(lowestCommonAncestor(...create_tree([1,2],1,2)));//1
+
+        console.log(lowestCommonAncestor1(...create_tree([3,5,1,6,2,0,8,null,null,7,4],5,4)));//5
+        console.log(lowestCommonAncestor1(...create_tree([1,2],1,2)));//1
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>131分割回文串</title>
+    <meta name="description" content="给你一个字符串 s，请你将 s 分割成一些子串，使每个子串都是回文串 。返回 s 所有可能的分割方案。">
+    <script>
+        /**
+         * @param {string} s
+         * @return {string[][]}
+         */
+        var partition = function(s) {
+            let dp = Array.from({length:s.length}, ()=>{
+                return new Array(s.length);
+            })
+            for(let i=1;i<=s.length;i++){//控制子串的长度
+                for(let j=0;j+i-1<s.length;j++){//控制子串的位置
+                    if(i==1){
+                        dp[j][j+i-1] = true;
+                    }else if(i==2){
+                        dp[j][j+i-1] = s[j] == s[j+i-1];
+                    }else{
+                        dp[j][j+i-1] = dp[j+1][j+i-2] && (s[j] == s[j+i-1]);
+                    }
+                }
+            }
+            function search(path,start){
+                if(start == s.length){
+                    res.push([...path]);
+                    return ;
+                }
+                for(let end = start;end<s.length;end++){
+                    if(dp[start][end]){
+                        path.push(s.slice(start, end+1));
+                        search(path, end+1);
+                        path.pop();
+                    }
+                }
+            }
+            let res = [];
+            search([], 0);
+            return res;
+        };
+        console.log(partition("aab"));//[["a","a","b"],["aa","b"]]
+        console.log(partition("a"));//[["a"]]
+        console.log(partition("bb"));//[["b","b"],["bb"]]
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

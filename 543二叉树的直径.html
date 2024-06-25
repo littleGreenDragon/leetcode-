@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>543二叉树的直径</title>
+    <meta name="description" content="给你一棵二叉树的根节点，返回该树的 直径 。
+
+    二叉树的 直径 是指树中任意两个节点之间最长路径的 长度 。这条路径可能经过也可能不经过根节点 root 。
+    
+    两节点之间路径的 长度 由它们之间边数表示。">
+    <script>
+        /**
+         * Definition for a binary tree node.
+         * function TreeNode(val, left, right) {
+         *     this.val = (val===undefined ? 0 : val)
+         *     this.left = (left===undefined ? null : left)
+         *     this.right = (right===undefined ? null : right)
+         * }
+         */
+        function TreeNode(val, left, right){
+            this.val = val==undefined? 0:val;
+            this.left = left==undefined? null:left;
+            this.right = right==undefined? null:right;
+        }
+        function create_tree(list){
+            if(list.length==0) return null;
+            let root = new TreeNode(list[0]);
+            let queue = [root];
+            for(let i=1;i<list.length;i+=2){
+                let parent = queue.shift();
+                if(list[i]!= null){
+                    parent.left = new TreeNode(list[i]);
+                    queue.push(parent.left);
+                }
+                if(i+1<list.length && list[i+1]!=null){
+                    parent.right = new TreeNode(list[i+1]);
+                    queue.push(parent.right);
+                }
+            }
+            return root;
+        }
+        /**
+         * @param {TreeNode} root
+         * @return {number}
+         */
+        var diameterOfBinaryTree = function(root) {//求出左子树的最大深度和右子树的最大深度,就是以本节点为根的最大宽度
+            let max = 0;
+            function tree_depth(root){
+                if(root == null) return 0;
+                let left = tree_depth(root.left);
+                let right = tree_depth(root.right);
+                max = Math.max(max, left+right+1);
+                return Math.max(left, right)+1;
+            }
+            tree_depth(root);
+            return max-1;//问的边数，不是点数
+        };
+        console.log(diameterOfBinaryTree(create_tree([1,2,3,4,5])));
+        console.log(diameterOfBinaryTree(create_tree([1,2])));
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

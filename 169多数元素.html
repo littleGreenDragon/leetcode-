@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>169多数元素</title>
+    <meta name="description" content="给定一个大小为 n 的数组 nums ，返回其中的多数元素。多数元素是指在数组中出现次数 大于 ⌊ n/2 ⌋ 的元素。你可以假设数组是非空的，并且给定的数组总是存在多数元素。">
+    <script>
+        /**
+         * @param {number[]} nums
+         * @return {number}
+         */
+        var majorityElement1 = function(nums) {//使用哈希表记住每个元素
+            let num_map = new Map();
+            for(let num of nums){
+                if(num_map.has(num)){
+                    num_map.set(num, num_map.get(num)+1);
+                }else{
+                    num_map.set(num, 1);
+                }
+                if(num_map.get(num) > nums.length/2){
+                    return num;
+                }
+            }
+        };
+        var majorityElement2 = function(nums) {//排序
+            nums.sort(function(a,b){
+                return a-b;
+            });
+            return nums[Math.floor(nums.length/2)];
+        };
+        var majorityElement3 = function(nums) {//摩尔投票法
+            let count=1;
+            let value = nums[0];
+            for(let i = 1;i< nums.length;i++){
+                if(nums[i] != value){
+                    count --;
+                }else{
+                    count ++;
+                }
+                if(count == 0){
+                    value = nums[i+1];
+                }
+            }
+            return value;
+        };
+
+        console.log(majorityElement1([3,2,3]));
+        console.log(majorityElement1([2,2,1,1,1,2,2]));
+
+        console.log(majorityElement2([3,2,3]));
+        console.log(majorityElement2([2,2,1,1,1,2,2]));
+
+        console.log(majorityElement3([3,2,3]));
+        console.log(majorityElement3([2,2,1,1,1,2,2]));
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

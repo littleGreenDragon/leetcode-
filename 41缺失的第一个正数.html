@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>41缺失的第一个正数</title>
+    <meta name="description" content="给你一个未排序的整数数组 nums ，请你找出其中没有出现的最小的正整数。请你实现时间复杂度为 O(n) 并且只使用常数级别额外空间的解决方案。">
+    <script>
+        /**
+         * @param {number[]} nums
+         * @return {number}
+         */
+        var firstMissingPositive1 = function(nums) {
+            //一个长度为n的数组，最小正整数只可能是[1,N+1]，因为首先正整数不包括0，那么假设这个长度为n的数组存了1-n,那么最小的正整数就只能是n+1。因此遍历整个数组，对于[1,n]的数i，对数组i-1的位置进行标记（使用负数作为标记），所以第一步是将所有负数消除，负数属于[1-N]以外，因此将所有负数设置为N+1
+            //消除负数
+            for(let i=0;i<nums.length;i++){
+                if(nums[i]<=0){
+                    nums[i] = nums.length+1;
+                }
+            }
+            //遍历数组，将[1-N]内的数对应的index-1修改为负数
+            for(let i=0;i< nums.length;i++){
+                let index = Math.abs(nums[i]);
+                if( index <= nums.length){
+                    nums[index-1] = - Math.abs(nums[index-1]);
+                }
+            }
+            //遍历数组，查看哪个下标的值不是负数，那么这个index+1就是最小未出现的正整数
+            for(let i=0;i< nums.length;i++){
+                if(nums[i]>0){
+                    return i+1;
+                }
+            }
+            //1-N的数都出现过了，那么最小未出现的数一定是n+1
+            return nums.length+1;
+        };
+        var firstMissingPositive2 = function(nums) {
+            //1,2,3,4,5 i=0 0<num[i]<n index=num[i]-1=0 index==i i++
+            //1,2,3,4,5 i=1 0<num[i]<n index=num[i]-1=1 index==i i++
+            //1,2,3,4,5 i=2 0<num[i]<n index=num[i]-1=2 index==i i++
+            //1,2,3,4,5 i=3 0<num[i]<n index=num[i]-1=3 index==i i++
+            //1,2,3,4,5 i=4 0<num[i]<n index=num[i]-1=4 index==i i++ i=5=n stop
+
+            //6,4,3,1,2 i=0 num[i]>n i++
+            //-1,4,3,1,2 i=1 0<num[i]<n index=num[i]-1=3 idex!=i change(num[i], num[index])
+            //-1,1,3,4,2 i=1 0<num[i]<n index=num[i]-1=0 index!=i change(num[i], num[index])
+            //1,-1,3,4,2 i=1 num[i]<0 i++
+            //1,-1,3,4,2 i=2 0<num[i]<n index=num[i]-1=2 index==i i++
+            //1,-1,3,4,2 i=3 0<num[i]<n index=num[i]-1=3 index==i i++
+            //1,-1,3,4,2 i=4 0<num[i]<n index=num[i]-1=1 index!=i change(num[i], num[index])
+            //1,2,3,4,-1 i=4 num[i]<0 i++ i=5=n stop
+
+            let i=0;
+            while(i<nums.length){//nums[i]作为哨兵
+                if(0<nums[i] && nums[i]<=nums.length){//只将正确的数进行复位
+                    let index = nums[i]-1;//找到其位置
+                    if(nums[index] ==nums[i]){//交换的位置的值和现在的值相同时跳过
+                        i++;
+                    }else{
+                        [nums[index], nums[i]] = [nums[i], nums[index]];
+                    }
+                }else{
+                    i++;
+                }
+            }
+            for(let i=0;i< nums.length;i++){
+                if(nums[i] != i+1){
+                    return i+1;
+                }
+            }
+            return nums.length+1;
+        };
+        var firstMissingPositive3 = function(nums) {
+            for(let i=0;i<nums.length;i++){
+                while(0<nums[i] && nums[i]<=nums.length && nums[i] != nums[nums[i]-1]){
+                    [nums[nums[i]-1], nums[i]] = [nums[i], nums[nums[i]-1]];
+                }
+            }
+            for(let i=0;i<nums.length;i++){
+                if(nums[i] != i+1){
+                    return i+1;
+                }
+            }
+            return nums.length+1;
+        };
+        
+        console.log(firstMissingPositive1([1,2,0]));//3
+        console.log(firstMissingPositive1([3,4,-1,1]));//2
+        console.log(firstMissingPositive1([7,8,9,11,12]));//1
+        
+        console.log(firstMissingPositive2([1,2,0]));//3
+        console.log(firstMissingPositive2([3,4,-1,1]));//2
+        console.log(firstMissingPositive2([7,8,9,11,12]));//1
+        console.log(firstMissingPositive2([1,1]));//2
+        
+        console.log(firstMissingPositive3([1,2,0]));//3
+        console.log(firstMissingPositive3([3,4,-1,1]));//2
+        console.log(firstMissingPositive3([7,8,9,11,12]));//1
+        console.log(firstMissingPositive3([1,1]));//2
+
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

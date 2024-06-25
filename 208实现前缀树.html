@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>208实现前缀树</title>
+    <meta name="description" content="Trie（发音类似 "try"）或者说 前缀树 是一种树形数据结构，用于高效地存储和检索字符串数据集中的键。这一数据结构有相当多的应用情景，例如自动补完和拼写检查。
+    请你实现 Trie 类：
+    Trie() 初始化前缀树对象。
+    void insert(String word) 向前缀树中插入字符串 word 。
+    boolean search(String word) 如果字符串 word 在前缀树中，返回 true（即，在检索之前已经插入）；否则，返回 false 。
+    boolean startsWith(String prefix) 如果之前已经插入的字符串 word 的前缀之一为 prefix ，返回 true ；否则，返回 false 。">
+    <script>
+        
+        var Trie = function() {
+            this.root = new TreeNode();
+        };
+        function TreeNode(val, children){
+            this.val = val==undefined? null:val;
+            this.is_leaf = false;
+            this.children = children==undefined? new Map():children;
+        }
+        /** 
+         * @param {string} word
+         * @return {void}
+         */
+        Trie.prototype.insert = function(word) {
+            let parent = this.root;
+            let i=0
+            for(;i<word.length;i++){//找到word中第一个不在trie中的字母
+                if(!parent.children.has(word[i])){//第一个没找到的
+                    break;
+                }
+                parent = parent.children.get(word[i]);
+            }
+            for(;i<word.length;i++){
+                let new_node = new TreeNode(word[i]);
+                parent.children.set(word[i], new_node);
+                parent = new_node;
+            }
+            parent.is_leaf = true;//标记其可以为叶子
+        };
+
+        /** 
+         * @param {string} word
+         * @return {boolean}
+         */
+        Trie.prototype.search = function(word) {
+            let parent = this.root;
+            for(let i=0;i<word.length;i++){
+                if(!parent.children.has(word[i])){
+                    return false;
+                }
+                parent = parent.children.get(word[i]);
+            }
+            if(!parent.is_leaf){//之前没有以本节点为尾的word插入
+                return false;
+            }
+            return true;
+        };
+
+        /** 
+         * @param {string} prefix
+         * @return {boolean}
+         */
+        Trie.prototype.startsWith = function(prefix) {
+            let parent = this.root;
+            for(let i=0;i<prefix.length;i++){
+                if(!parent.children.has(prefix[i])){
+                    return false;
+                }
+                parent = parent.children.get(prefix[i]);
+            }
+            return true;
+        };
+
+        /**
+         * Your Trie object will be instantiated and called as such:
+         * var obj = new Trie()
+         * obj.insert(word)
+         * var param_2 = obj.search(word)
+         * var param_3 = obj.startsWith(prefix)
+         */
+        function test(type,param){
+            let trie = new Trie();
+            let res = [null];
+            for(let i=1;i<type.length;i++){
+                if(type[i] == 'insert'){
+                    trie.insert(param[i][0])
+                    res.push(null);
+                }else if(type[i] == 'search'){
+                    res.push(trie.search(param[i][0]));
+                }else if(type[i] == 'startsWith'){
+                    res.push(trie.startsWith(param[i][0]));
+                }
+            }
+            return res;
+        }
+        console.log(test(["Trie", "insert", "search", "search", "startsWith", "insert", "search"],[[], ["apple"], ["apple"], ["app"], ["app"], ["app"], ["app"]]));//[null, null, true, false, true, null, true]
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

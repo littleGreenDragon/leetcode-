@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>70爬楼梯</title>
+    <meta name="description" content="假设你正在爬楼梯。需要 n 阶你才能到达楼顶。
+    每次你可以爬 1 或 2 个台阶。你有多少种不同的方法可以爬到楼顶呢？">
+    <script>
+        /**
+         * 9:08-9:12
+         * @param {number} n
+         * @return {number}
+         */
+        var climbStairs = function(n) {//超时
+            function climb(n){
+                if(n==1) return 1;
+                if(n==2) return 2;
+                return climb(n-1) + climb(n-2);
+            }
+            return climb(n);
+        };
+        var climbStairs = function(n) {
+            let dp = new Array();
+            dp[1] = 1;
+            dp[2] = 2;
+            for(let i=3;i<=n;i++){
+                dp[i] = dp[i-1] + dp[i-2];
+            }
+            return dp[n];
+        };
+        var climbStairs = function(n) {//不用额外的数组
+            let first = 1;
+            let second = 2;
+            if(n==1) return 1;
+            if(n==2) return 2;
+            let res;
+            for(let i=3;i<=n;i++){
+                res = first+second;
+                first = second;
+                second = res;
+            }
+            return res;
+        };
+        console.log(climbStairs(2));//2
+        console.log(climbStairs(3));//3
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

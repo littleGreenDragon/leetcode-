@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>22括号生成</title>
+    <meta name="description" content="数字 n 代表生成括号的对数，请你设计一个函数，用于能够生成所有可能的并且 有效的 括号组合。">
+    <script>
+        /**
+         * @param {number} n
+         * @return {string[]}
+         */
+        var generateParenthesis = function(n) {//当栈内右括号的数量大于左括号时，是非法的分支。l=r=n时终止
+            function create(index, path, left_num, right_num){
+                if(right_num >left_num || left_num>n){//个数超了
+                    return;
+                }
+                if(index == 2*n){
+                    res.push(path.join(''));
+                }
+                path.push('(');
+                create(index+1, path, left_num+1, right_num);
+                path.pop();
+                path.push(')');
+                create(index+1, path, left_num, right_num+1);
+                path.pop();
+            }
+            if(n==0) return [];
+            let res = [];
+            create(0,[],0,0);
+            return res;
+        };
+        console.log(generateParenthesis(2));//['()()','(())']
+        console.log(generateParenthesis(3));//["((()))","(()())","(())()","()(())","()()()"]
+        console.log(generateParenthesis(1));//['()']
+        console.log(generateParenthesis(0));//[]
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

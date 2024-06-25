@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>62不同路径</title>
+    <meta name="description" content="一个机器人位于一个 m x n 网格的左上角 （起始点在下图中标记为 “Start” ）。机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为 “Finish” ）。问总共有多少条不同的路径？">
+    <script>
+        /**
+         * @param {number} m
+         * @param {number} n
+         * @return {number}
+         */
+        var uniquePaths = function(m, n) {//动态规划，完全背包问题，可以重复的向右向下，dp[i][j]表示[0,0]走到[i,j]有几种方式，dp[i][j] = dp[i-1][j]+dp[i][j-1]
+            let dp = Array.from({length:m}, ()=>{
+                return new Array(n);
+            });
+            for(let i=0;i<m;i++){
+                dp[i][0] = 1;//起点终点在同一列
+            }
+            for(let i=0;i<m;i++){
+                for(let j=1;j<n;j++){
+                    if(i==0){//起点终点在一行
+                        dp[i][j] = 1;
+                    }else{
+                        dp[i][j] = dp[i-1][j]+dp[i][j-1];
+                    }
+                }
+            }
+            return dp[m-1][n-1];
+        };
+        console.log(uniquePaths(3,7));//28
+        console.log(uniquePaths(3,2));//3
+        console.log(uniquePaths(7,3));//28
+        console.log(uniquePaths(3,3));//6
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

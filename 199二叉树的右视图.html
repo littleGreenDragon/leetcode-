@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>199二叉树的右视图</title>
+    <meta name="description" content="给定一个二叉树的 根节点 root，想象自己站在它的右侧，按照从顶部到底部的顺序，返回从右侧所能看到的节点值。">
+    <script>
+        /**
+         * Definition for a binary tree node.
+         * function TreeNode(val, left, right) {
+         *     this.val = (val===undefined ? 0 : val)
+         *     this.left = (left===undefined ? null : left)
+         *     this.right = (right===undefined ? null : right)
+         * }
+         */
+         function TreeNode(val, left, right){
+            this.val = val==undefined? 0:val;
+            this.left = left==undefined? null:val;
+            this.right = right==undefined? null:val;
+        }
+        function create_tree(list){
+            if (list.length == 0) return null;
+            let root = new TreeNode(list[0]);
+            let queue = [root];
+            for(let i=1;i<list.length;i+=2){
+                let parent = queue.shift();
+                if(list[i] != null){
+                    parent.left = new TreeNode(list[i]);
+                    queue.push(parent.left);
+                }
+                if(i+1<list.length && list[i+1] != null){
+                    parent.right = new TreeNode(list[i+1]);
+                    queue.push(parent.right);
+                }
+            }
+            return root;
+        }
+        /**
+         * @param {TreeNode} root
+         * @return {number[]}
+         */
+        var rightSideView = function(root) {//就是返回每一层的最后一个
+            if(root == null) return [];
+            let queue = [root];
+            let res = [];
+            let parent_num = 1;
+            while(queue.length>0){
+                let num = parent_num;
+                parent_num =0;
+                let parent ;
+                for(let i=0;i<num;i++){
+                    parent = queue.shift();
+                    if(parent.left != null) {
+                        queue.push(parent.left);
+                        parent_num++;
+                    }
+                    if(parent.right != null) {
+                        queue.push(parent.right);
+                        parent_num++;
+                    }
+                }
+                res.push(parent.val);
+            }
+            return res;
+        };
+        console.log(rightSideView(create_tree([1,2,3,null,5,null,4])));//[1,3,4]
+        console.log(rightSideView(create_tree([1,null,3])));//[1,3]
+        console.log(rightSideView(create_tree([])));//[]
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

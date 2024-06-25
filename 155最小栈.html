@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>155最小栈</title>
+    <meta name="description" content="设计一个支持 push ，pop ，top 操作，并能在常数时间内检索到最小元素的栈。
+    实现 MinStack 类:
+    MinStack() 初始化堆栈对象。
+    void push(int val) 将元素val推入堆栈。
+    void pop() 删除堆栈顶部的元素。
+    int top() 获取堆栈顶部的元素。
+    int getMin() 获取堆栈中的最小元素。">
+    <script>
+        
+        var MinStack = function() {
+            this.stack = [];
+            this.length = 0;
+            this.min_stack = [];
+        };
+
+        /** 
+         * @param {number} val
+         * @return {void}
+         */
+        MinStack.prototype.push = function(val) {
+            this.stack[this.length] = val;
+            if(this.length == 0){
+                this.min_stack[this.length] = val;
+            }else{
+                this.min_stack[this.length] = Math.min(this.min_stack[this.length-1], val);
+            }
+            this.length ++;
+        };
+
+        /**
+         * @return {void}
+         */
+        MinStack.prototype.pop = function() {
+            this.length --;
+        };
+
+        /**
+         * @return {number}
+         */
+        MinStack.prototype.top = function() {
+            return this.stack[this.length-1];
+        };
+
+        /**
+         * @return {number}
+         */
+        MinStack.prototype.getMin = function() {
+            return this.min_stack[this.length-1];
+        };
+        
+        function create_stack(list,type){
+            var obj = new MinStack();
+            for(let i=1;i<list.length;i++){
+                if(type[i] == 'push'){
+                    obj.push(list[i][0]);
+                }else if(type[i] == "getMin"){
+                    console.log(obj.getMin());
+                }else if(type[i] == "pop"){
+                    obj.pop();
+                }else{
+                    console.log(obj.top());
+                }
+            }
+        }
+        create_stack([[],[-2],[0],[-3],[],[],[],[]], ["MinStack","push","push","push","getMin","pop","top","getMin"]);
+        create_stack([[],[2147483646],[2147483646],[2147483647],[],[],[],[],[],[],[2147483647],[],[],[-2147483648],[],[],[],[]], ["MinStack","push","push","push","top","pop","getMin","pop","getMin","pop","push","top","getMin","push","top","getMin","pop","getMin"]);
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

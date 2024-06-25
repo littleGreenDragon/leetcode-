@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>108将有序数组转换为二叉搜索树</title>
+    <meta name="description" content="给你一个整数数组 nums ，其中元素已经按 升序 排列，请你将其转换为一棵 
+    平衡
+     二叉搜索树。">
+     <script>
+        /**
+         * Definition for a binary tree node.
+         * function TreeNode(val, left, right) {
+         *     this.val = (val===undefined ? 0 : val)
+         *     this.left = (left===undefined ? null : left)
+         *     this.right = (right===undefined ? null : right)
+         * }
+         */
+        function TreeNode(val, left,right){
+            this.val = val == undefined ? 0:val;
+            this.left = left == undefined ? null:left;
+            this.right = right == undefined ? null:right;
+        }
+        function create_tree(list){
+            if(list.length==0) return null;
+            let root = new TreeNode(list[0]);
+            let stack = [root];
+            for(let i=1;i<list.length;i+=2){
+                let parent = stack.shift();
+                if(list[i] != null) {
+                    parent.left = new TreeNode(list[i]);
+                    stack.push(parent.left);
+                }
+                if(i+1<list.length && list[i+1] != null) {
+                    parent.right = new TreeNode(list[i+1]);
+                    stack.push(parent.right);
+                }
+            }
+            return root;
+        }
+        /**
+         * @param {number[]} nums
+         * @return {TreeNode}
+         */
+        var sortedArrayToBST = function(nums) {
+            function build(left, right){
+                if(left>right) return null;
+                let mid = Math.floor((left+right)/2);
+                return new TreeNode(nums[mid], build(left, mid-1), build(mid+1, right));
+            }
+            return build(0, nums.length-1);
+        };
+
+
+        console.log(sortedArrayToBST([-10,-3,0,5,9]));//[0,-10,5,null,-3,null,9]
+        console.log(sortedArrayToBST([1,3]));//[1,3]
+     </script>
+</head>
+<body>
+    
+</body>
+</html>

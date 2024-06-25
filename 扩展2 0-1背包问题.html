@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0-1背包问题</title>
+    <meta name="description" content="给定 n个物品，第i个物品的重量为 weight[i-1]、价值为 val[i-1] ，和一个容量为cap 的背包。每个物品只能选择一次，问在限定背包容量下能放入物品的最大价值。">
+    <script>
+        let  max = function(weight,val,cap){
+            function dfs(i,c){//i表示剩余i个物品的决策（选是或否），c表示背包剩余c的容量，值为价值
+                if(i == 0 || c == 0){//没有物品或背包满了
+                    return 0;
+                }
+                if(weight[i-1] > c){//超出了背包容量，这个物品只能选否
+                    return dfs(i-1, c);
+                }
+                //没超出容量，有两个选择（选和不选），保存二值更大的值
+                return Math.max(dfs(i-1, c), dfs(i-1, c-weight[i-1])+val[i-1]);
+            }
+            return dfs(weight.length, cap);
+        };
+        let  max1 = function(weight,val,cap){//因为这个问题其实是一个二叉树，因此会出现很多重叠的分支，保存这些分支，避免重复计算
+            function dfs(i,c,m){//i表示第剩余i个物品，c表示背包剩余c的容量，值为价值,m表示存储的中间结果
+                if(i == 0 || c == 0){//没有物品或背包满了
+                    return 0;
+                }
+                if(weight[i-1] > c){//超出了背包容量，这个物品只能选否
+                    return dfs(i-1, c,m);
+                }
+                if(m[i][c]){
+                    return m[i][c];
+                }
+                //没超出容量，有两个选择（选和不选），保存二值更大的值
+                let no = dfs(i-1, c,m);
+                let yes = dfs(i-1, c-weight[i-1],m)+val[i-1];
+                m[i][c] = Math.max(no, yes)
+                return m[i][c];
+            }
+            return dfs(weight.length, cap,new Array(weight.length+1).fill([]));
+        };
+        let  max2 = function(weight,val,cap){//动态规划,核心：容量为cap的i个物品下的最大价值一定等于cap-weight[i]下的i-1个物品的最大价值加上i的价值和不加时的最大值
+            //横坐标是第i个物品的决策，纵坐标是cap可能的数值
+            //dp[i,c]=前i个物品在容量为c下的最大价值，待求解dp[n,cap]求全部物品在cap下的最大价值。dp[0,j]表示没有物品参与的最大价值（全为0），dp[i,0]表示没有容量的最大价值，全为0
+            let dp = new Array(weight.length+1).fill([0]);//控制dp[i,0]
+            for(let i=0;i<=weight.length;i++){//i个物品参与挑选
+                for(let j=1;j<=cap;j++){//背包剩余容量
+                    if(i==0){//控制dp[0,j]
+                        dp[i][j] = 0;//在什么物品都不参与选择时，背包多大都是没有物品，所以最大存储的价值是0
+                    }else{
+                        if(weight[i-1] > j){//i在剩余容量为j时时放不下去，那么不放的最大价值和i-1一样
+                            dp[i][j] = dp[i-1][j];
+                        }else{//能放下，那么在加入和不加入之间选一个，不加入就是和i-1一样，加入的话（首先本i物品必须加进来，那么剩余的容量就由i-1自由分配，为了价值最大化，因此是dp[i-1][j-weight[i-1]]）
+                            dp[i][j] = Math.max(dp[i-1][j], dp[i-1][j-weight[i-1]]+val[i-1]);
+                        }
+                    }
+                }
+            }
+            return dp[weight.length][cap];
+        };
+        let  max3 = function(weight,val,cap){//动态规划,https://www.hello-algo.com/chapter_dynamic_programming/knapsack_problem/#4 由于每次更新数组时，只有正上方dp[i-1][j]和左上方dp[i-1][j-weight[i]]参与，因此可以不使用二维数组，使用一维数组，从后往前进行更新，避免左上被修改
+            let dp = new Array(cap+1).fill(0);
+            for(let i=1;i<=weight.length;i++){//i=0时就是全0，因为没有物品参与时，不会有价值
+                for(let j=cap;j>0;j--){//j=0就是0，因为容量为0时不会有价值
+                    if(weight[i-1] <= j){//只有有可能增加的情况才需要更新，因为超出容量时dp[i][j] = dp[i-1][j],现在只有一维数组，相当于dp[i-1][j]的值就存储在dp[i][j],所以在超出背包容量时，忽略即可
+                        dp[j] = Math.max(dp[j], dp[j-weight[i-1]]+val[i-1]);
+                    }
+                }
+            }
+            return dp[cap];
+        };
+
+        console.log(max([10,20,20],[60,110,120],30));//180
+        console.log(max1([10,20,20],[60,110,120],30));//180
+        console.log(max2([10,20,20],[60,110,120],30));//180
+        console.log(max3([10,20,20],[60,110,120],30));//180
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

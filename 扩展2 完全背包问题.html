@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>扩展2 完全背包问题</title>
+    <meta name="description" content="给定几个物品，第i个物品的重量为 weight|i- 1|、价值为 val[i -1] ，和一个容量为 cap的背包。每个物品可以重复选取，问在限定背包容量下能放入物品的最大价值。和扩展1的区别是物品可以重复选取">
+    <script>
+        let max = function(weight, val, cap){//在判断第i个物品是否加入时，如果不加入，那么其价值等于dp[i-1][j];如果加入，那么价值等于dp[i][j-weight[i-1]]+val[i-1]
+            let dp = new Array(weight.length+1).fill([0]);//没有容量时价值为0
+            for(let i=0;i<=weight.length;i++){
+                for(let j=0;j<=cap;j++){
+                    if(i==0){
+                        dp[i][j] = 0;
+                    }else{
+                        if(weight[i-1] > j){//放不了，整个背包的容量都装不了这个物品
+                            dp[i][j] = dp[i-1][j];
+                        }else{
+                            dp[i][j] = Math.max(dp[i-1][j], dp[i][j-weight[i-1]]+val[i-1]);
+                        }
+                    }
+                }
+            }
+            return dp[weight.length][cap];
+        }
+        let max1 = function(weight, val, cap){//因为dp[i][j]只使用到正上方dp[i-1][j]和左边dp[i][j-weight[i-1]]，所以不需要从后面往前面走，从前往后即可，因为必须更新完了才能用
+            let dp = new Array(cap+1).fill(0);
+            for(let i=0;i<=weight.length;i++){
+                for(let j=0;j<=cap;j++){//
+                    if(weight[i-1] <=j){
+                        dp[j]=Math.max(dp[j], dp[j-weight[i-1]]+val[i-1]);
+                    }
+                }
+            }
+            return dp[cap];
+        }
+        console.log(max([10,20,20],[60,110,120],30));//180
+        console.log(max([10,20,20],[90,110,120],30));//270
+
+        console.log(max1([10,20,20],[60,110,120],30));//180
+        console.log(max1([10,20,20],[90,110,120],30));//270
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

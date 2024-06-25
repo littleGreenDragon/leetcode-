@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>55跳跃游戏</title>
+    <meta name="description" content="给你一个非负整数数组 nums ，你最初位于数组的 第一个下标 。数组中的每个元素代表你在该位置可以跳跃的最大长度。
+    判断你是否能够到达最后一个下标，如果可以，返回 true ；否则，返回 false 。">
+    <script>
+        /**
+         * @param {number[]} nums
+         * @return {boolean}
+         */
+        var canJump = function(nums) {//首先获取下标0的位置，其值就是最大可以到达的位置，即num[i] = x -> i+1 i+2...i+x,在可以到达的位置中更新最大可达值，直到末尾
+            let max = nums[0];
+            for(let i=1;i<=max && i<nums.length;i++){
+                max = Math.max(max, nums[i]+i);
+                if(max >= nums.length-1) return true;
+            }
+            return max>=nums.length-1? true:false;
+        };
+        console.log(canJump([2,3,1,1,4]));//true
+        console.log(canJump([3,2,1,0,4]));//false
+        console.log(canJump([1,2,3]));//true
+        console.log(canJump([1,2,3]));//true
+        console.log(canJump([1]));//true
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

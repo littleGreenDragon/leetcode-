@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>189轮转数组</title>
+    <meta name="description" content="给定一个整数数组 nums，将数组中的元素向右轮转 k 个位置，其中 k 是非负数。">
+    <script>
+        /**
+         * @param {number[]} nums
+         * @param {number} k
+         * @return {void} Do not return anything, modify nums in-place instead.
+         */
+        var rotate1 = function(nums, k) {//index+k%length -> index, 使用nums = new_nums将无法通过的
+            let new_nums = [];
+            for(let i=0;i<nums.length;i++){
+                new_nums[(i+k)%nums.length] = nums[i];
+            }
+            for(let i=0;i<nums.length;i++){
+                nums[i] = new_nums[i];
+            }
+            return nums;
+        };
+        var rotate2 = function(nums, k) {//i位置作为哨兵，用来存每次被覆盖的元素，从i位置的元素开始逐个往后k的位置进行覆盖
+            // 1 2 3 4 5 6 k=2 i=0 to_index=i end=gcd(k,n)=2 最大公约数| to_index=(to_index+k)%length=2 to_index!=i change(i,to_index) 
+            // 3 2 1 4 5 6 i=0 to_index=(to_index+k)%length=4 to_index!=i change(i,to_index)
+            // 5 2 1 4 3 6 i=0 to_index=(to_index+k)%length=0 to_index==i i++ to_index = i
+            // 5 2 1 4 3 6 i=1 to_index=(to_index+k)%length=3 to_index!=i change(i,to_index)
+            // 5 4 1 2 3 6 i=1 to_index=(to_index+k)%length=5 to_index!=i change(1,to_index)
+            // 5 6 1 2 3 4 i=1 to_index=(to_index+k)%length=1 to_index==i i++==end->stop
+            function gcd(m,n){//辗转相除法， 计算两个非负整数的最大公约数
+                // 1997 ÷ 615 = 3 (余 152)
+                // 615 ÷ 152 = 4(余7)
+                // 152 ÷ 7 = 21(余5)
+                // 7 ÷ 5 = 1 (余2)
+                // 5 ÷ 2 = 2 (余1)
+                // 2 ÷ 1 = 2 (余0)->最大公约数为1
+                if(n == 0) return m;
+                let result = gcd(n, m%n);
+                return result;
+            }
+            function gcd1(m,n){//m是被除数 n是除数
+                while(m%n!=0){
+                    let temp = m;
+                    m = n;
+                    n = temp%n;
+                }
+                return n;
+            }
+            let i=0;
+            let to_index = i;
+            let end = gcd1(k,nums.length);
+            while(i!=end){
+                to_index = (to_index + k)%nums.length;
+                if(to_index != i){//还没循环到头，那就意味着可以交换
+                    [nums[i], nums[to_index]] = [nums[to_index], nums[i]];
+                }else{//交换到头了
+                    i++;
+                    to_index = i;
+                }
+            }
+            return nums;
+        };
+        var rotate3 = function(nums, k) {//修改2的代码，变少一些
+            function gcd(m,n){//求出最大公约数,注意传参数的时候k一定要作为m
+                while(m%n != 0){
+                    let temp = m;
+                    m = n;
+                    n = temp%n;
+                }
+                return n;
+            }
+            for(let i=0;i < gcd(k,nums.length);i++){//k=0时m%k会出现错误
+                let next = (i+k)%nums.length;
+                while(i != next){
+                    [nums[i], nums[next]] = [nums[next], nums[i]];
+                    next = (next+k)%nums.length;
+                }
+            }
+            return nums;
+        };
+        var rotate4 = function(nums, k) {//翻转数组，在移动时，末尾k%length个元素会移到数组头,因此可以先将整个数组进行翻转，然后后半数就到了前半，然后再分别对[0,k-1] [k,nums.length]进行翻转就是最终结果了
+            k = k%nums.length;
+            //翻转整个数组
+            for(let i = 0; i < nums.length-i-1;i++){
+                [nums[i], nums[nums.length-i-1]] = [nums[nums.length-i-1], nums[i]];
+            }
+            //翻转前半
+            for(let i = 0;i < k-i-1 ; i++){
+                [nums[i], nums[k-i-1]] = [nums[k-i-1], nums[i]];
+            }
+            //翻转后半
+            for(let i = k;i < nums.length-i+k-1;i++){
+                [nums[i], nums[nums.length-i+k-1]] = [nums[nums.length-i+k-1], nums[i]];
+            }
+            return nums;
+        };
+        var rotate5 = function(nums, k) {//减少一点3方法的代码
+            function reverse(start, end){
+                while(start < end){
+                    [nums[start], nums[end]] = [nums[end], nums[start]];
+                    start ++;
+                    end --;
+                }
+            }
+            k = k%nums.length;
+            reverse(0, nums.length-1);
+            reverse(0, k-1);
+            reverse(k, nums.length-1);
+            return nums;
+        };
+        console.log(rotate1([1,2,3,4,5,6,7],3));//[5,6,7,1,2,3,4]
+        console.log(rotate1([-1,-100,3,99],2));//[3,99,-1,-100]
+
+        console.log(rotate2([1,2,3,4,5,6,7],3));//[5,6,7,1,2,3,4]
+        console.log(rotate2([-1,-100,3,99],2));//[3,99,-1,-100]
+
+        console.log(rotate3([1,2,3,4,5,6,7],3));//[5,6,7,1,2,3,4]
+        console.log(rotate3([-1,-100,3,99],2));//[3,99,-1,-100]
+        console.log(rotate3([-1],2));//[-1]
+        console.log(rotate3([1],0));//[1]
+
+        console.log(rotate4([1,2,3,4,5,6,7],3));//[5,6,7,1,2,3,4]
+        console.log(rotate4([-1,-100,3,99],2));//[3,99,-1,-100]
+        console.log(rotate4([-1],2));
+
+        console.log(rotate5([1,2,3,4,5,6,7],3));//[5,6,7,1,2,3,4]
+        console.log(rotate5([-1,-100,3,99],2));//[3,99,-1,-100]
+        console.log(rotate5([-1],2));
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>347前k个高频词元素</title>
+    <meta name="description" content="给你一个整数数组 nums 和一个整数 k ，请你返回其中出现频率前 k 高的元素。你可以按 任意顺序 返回答案。">
+    <script>
+        /**
+         * @param {number[]} nums
+         * @param {number} k
+         * @return {number[]}
+         */
+        var topKFrequent1 = function(nums, k) {
+            class Heap{
+                constructor(compare){
+                    this.compare =compare;
+                    this.data = [];
+                    this.length = 0;
+                }
+                create_heap_up(list){
+                    for(let i=0;i<list.length;i++){
+                        this.push(list[i]);
+                    }
+                }
+                push(num){
+                    this.data[this.length] = num;
+                    this.bubble_up(this.length);
+                    this.length++;
+                }
+                bubble_up(index){
+                    let parent = Math.floor((index-1)/2);
+                    while(parent>=0 && this.compare(this.data[index], this.data[parent])>0){
+                        [this.data[index], this.data[parent]] = [this.data[parent], this.data[index]];
+                        index = parent;
+                        parent = Math.floor((index-1)/2);
+                    }
+                }
+                top(){
+                    return this.data[0];
+                }
+                print(){
+                    let res = [];
+                    while(this.length>0){
+                        res.push(this.pop());
+                    }
+                    return res;
+                }
+                pop(){
+                    let res = this.data[0];
+                    [this.data[0], this.data[this.length-1]] = [this.data[this.length-1], this.data[0]];
+                    this.length--;
+                    this.sink(0);
+                    return res;
+                }
+                sink(index){
+                    let left_child = 2*index+1;
+                    let right_child = 2*index+2;
+                    while(left_child < this.length){
+                        let max_child = left_child;
+                        if(right_child<this.length && this.compare(this.data[right_child], this.data[left_child])>0){
+                            max_child = right_child;
+                        }
+                        if(this.compare(this.data[max_child], this.data[index])>0){
+                            [this.data[max_child], this.data[index]] = [this.data[index], this.data[max_child]];
+                        }else{
+                            break;
+                        }
+                        index = max_child;
+                        left_child = 2*index+1;
+                        right_child = 2*index+2;
+                    }
+                }
+            }
+            //对每个数进行计数
+            let map = new Map();
+            for(let i=0;i<nums.length;i++){
+                if(map.has(nums[i])){
+                    map.set(nums[i], map.get(nums[i])+1);
+                }else{
+                    map.set(nums[i], 1);
+                }
+            }
+            //对map中的数构建堆
+            let heap = new Heap(function(a,b){//创建一个小根堆
+                return b[1]-a[1];
+            });
+            for(let [key, value] of map.entries()){
+                if(heap.length < k){//先创建一个堆
+                    heap.push([key, value]);
+                }else{//后续的和堆顶比较，如果大则改变堆顶，调整堆
+                    if(heap.top()[1] < value){
+                        heap.data[0] = [key, value];
+                        heap.sink(0);
+                    }
+                }
+            }
+            let res = [];
+            for(let i=0;i<heap.data.length;i++){//取出键返回
+                res.push(heap.data[i][0]);
+            }
+            return res;
+        };
+        var topKFrequent2 = function(nums, k) {
+            let count = new Map();
+            let max = 1;
+            for(let i=0;i<nums.length;i++){//计数
+                if(count.has(nums[i])){
+                    count.set(nums[i], count.get(nums[i])+1);
+                    max = Math.max(max, count.get(nums[i]));
+                }else{
+                    count.set(nums[i],1);
+                }
+            }
+            let list = [];
+            for(let [key, value] of count.entries()){//归到不同的桶，每个桶是频次
+                if(list[value]){
+                    list[value].push(key);
+                }else{
+                    list[value] = [key];
+                }
+            }
+            let res=[];
+            for(;max>=1&& res.length<k;max--){
+                if(list[max]){
+                    res=res.concat(list[max]);
+                }
+            }
+            return res.slice(0,k+1);
+        };
+        
+        console.log(topKFrequent1(nums = [1,1,1,2,2,3], k = 2));//[1,2]
+        console.log(topKFrequent1(nums = [2,7,3,8,5,1,3,5], k = 2));//[3,5]
+        console.log(topKFrequent1(nums = [1], k = 1));//[1]
+
+        console.log(topKFrequent2(nums = [1,1,1,2,2,3], k = 2));//[1,2]
+        console.log(topKFrequent2(nums = [2,7,3,8,5,1,3,5], k = 2));//[3,5]
+        console.log(topKFrequent2(nums = [1], k = 1));//[1]
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>128最长连续序列</title>
+    <meta name="description" content="给定一个未排序的整数数组 nums ，找出数字连续的最长序列（不要求序列元素在原数组中连续）的长度。请你设计并实现时间复杂度为 O(n) 的算法解决此问题。">
+    <script>
+        /**
+         * @param {number[]} nums
+         * @return {number}
+         */
+        var longestConsecutive = function(nums) {
+            //使用一个map，值存连续个数,每次出现连续段时，只修改起点终点的值
+            let num_map = new Map();
+            let max_length = 0;
+            for(let num of nums){
+                if(!num_map.has(num)){//只有不存在这个值才可能更新序列
+                    let start_index;
+                    let length;
+                    let end_index;
+                    if(num_map.has(num-1)){//如果有前序序列
+                        start_index = num - num_map.get(num - 1);
+                        length = num_map.get(num - 1) + 1;
+                    }else{//没有则初始化
+                        start_index = num;
+                        length = 1;
+                    }
+                    num_map.set(num, length);//这个位置不添加的话，每次都判断不存在，会给length加多次
+                    if(num_map.has(num+1)){//如果有后续节点
+                        end_index =  num_map.get(num+1) + num;
+                        length += num_map.get(num + 1);
+                        
+                    }else{
+                        end_index = num;
+                    }
+                    num_map.set(start_index, length);
+                    num_map.set(end_index, length);
+                    max_length = max_length > length? max_length:length;
+                }
+            }
+            return max_length;
+        };
+
+        console.log(longestConsecutive([100,4,200,1,3,2]));//4
+        console.log(longestConsecutive([0,3,7,2,5,8,4,6,0,1]));//9
+        console.log(longestConsecutive([9,1,4,7,3,-1,0,5,8,-1,6]));//7
+        console.log(longestConsecutive([4,0,-4,-2,2,5,2,0,-8,-8,-8,-8,-1,7,4,5,5,-4,6,6,-3]));//5
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

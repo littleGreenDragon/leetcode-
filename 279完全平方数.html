@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>279完全平方数</title>
+    <meta name="description" content="给你一个整数 n ，返回 和为 n 的完全平方数的最少数量 。完全平方数 是一个整数，其值等于另一个整数的平方；换句话说，其值等于一个整数自乘的积。例如，1、4、9 和 16 都是完全平方数，而 3 和 11 不是。">
+    <script>
+        /**
+         * @param {number} n
+         * @return {number}
+         */
+        var numSquares = function(n) {//使用动态规划，dp[i][j], i为可选的完全平方数，j为整数n，dp[i][j]为使用的完全平方数的个数。因为完全平方数是可以重复使用的，所以是一个完全背包问题，dp[i][j] = min(dp[i-1][j], dp[i][j-weight[i-1]]+val[i-1])，其中weight[i-1]=i^2,val[i-1]=1
+            let number_n = Math.floor(Math.sqrt(n));
+            let dp = new Array(number_n+1).fill([0]);//n为0时0个数就可以组成
+            for(let i=0;i<=number_n;i++){
+                for(let j=1;j<=n;j++){
+                    if(i==0){
+                        dp[i][j] = n+1;//没有完全数参与时，没办法组成j,不使用Number.MAX_VALUE，因为+1时会内存溢出，所以使用n+1替代，因为最差的情况就是n个1相加，表示无法组成
+                    }else{
+                        if(i**2 <= j){//可以作为一部分
+                            dp[i][j] = Math.min(dp[i-1][j], dp[i][j-i**2]+1);
+                        }else{
+                            dp[i][j] = dp[i-1][j];
+                        }
+                    }
+                }
+            }
+            return dp[number_n][n];
+        };
+        var numSquares1 = function(n) {//压缩成一位数组
+            let number_n = Math.floor(Math.sqrt(n));
+            let dp = new Array(n+1).fill(n+1);//n为0时0个数就可以组成
+            dp[0] = 0;
+            for(let i=1;i<=number_n;i++){
+                for(let j=1;j<=n;j++){
+                    if(i**2 <= j){//可以作为一部分
+                        dp[j] = Math.min(dp[j], dp[j-i**2]+1);
+                    }
+                }
+            }
+            return dp[n];
+        };
+
+        console.log(numSquares(12));//3
+        console.log(numSquares(13));//2
+
+        console.log(numSquares1(12));//3
+        console.log(numSquares1(13));//2
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>扩展4 图</title>
+    <script>
+        let bfs = function(graph){//将一个点作为起点，每次从队列中弹出一个节点，将其邻接点添加到队列中（没有访问的）
+            let queue = [0];//将下标为0的节点添加到队列中
+            let visited = new Set();
+            visited.add(0);
+            let print_res = [];
+            while(queue.length>0){
+                let parent = queue.shift();
+                print_res.push(parent);
+                for(let i=0;i<graph.length;i++){
+                    if(graph[parent][i] == 1 && !visited.has(i)){
+                        queue.push(i);
+                        visited.add(i);//注意是入队列了就算visited了，不然这个节点进队了但很晚弹出时，前面的节点又会多次入队
+                    }
+                }
+            }
+            return print_res;
+        }
+        let dfs = function(graph){//递归，从一个节点开始，每次碰到未访问的就去访问，在没有可以访问的节点时返回
+            let print_res = [];
+            function search(start,visited){
+                print_res.push(start);
+                for(let i=0;i<graph.length;i++){
+                    if(graph[start][i]!=0 && !visited.has(i)){
+                        visited.add(i);
+                        search(i,visited);
+                    }
+                }
+            }
+            let dfs_set = new Set();
+            dfs_set.add(0);
+            search(0, dfs_set);
+            return print_res;
+        }
+        console.log(bfs([
+                        [0,1,0,1,0,0,0,0,0],
+                        [1,0,1,0,1,0,0,0,0],
+                        [0,1,0,0,0,1,0,0,0],
+                        [1,0,0,0,1,0,1,0,0],
+                        [0,1,0,1,0,1,0,1,0],
+                        [0,0,1,0,1,0,0,0,1],
+                        [0,0,0,1,0,0,0,1,0],
+                        [0,0,0,0,1,0,1,0,1],
+                        [0,0,0,0,0,1,0,1,0]
+                        ]));//[0,1,3,2,4,6,5,7,8]
+        console.log(dfs([
+                        [0,1,0,1,0,0,0],
+                        [1,0,1,0,0,0,0],
+                        [0,1,0,0,0,1,0],
+                        [1,0,0,0,0,0,0],
+                        [0,0,0,0,0,1,0],
+                        [0,0,1,0,1,0,1],
+                        [0,0,0,0,0,1,0],
+                        ]));//[0,1,2,5,4,6,3]
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>54螺旋矩阵</title>
+    <meta name="description" content="给你一个 m 行 n 列的矩阵 matrix ，请按照 顺时针螺旋顺序 ，返回矩阵中的所有元素。">
+    <script>
+        /**
+         * @param {number[][]} matrix
+         * @return {number[]}
+         */
+        var spiralOrder = function(matrix) {
+            let left = 0;//列的左右边界
+            let right = matrix[0].length-1;
+            let top = 0;//行的上下边界
+            let bottom = matrix.length-1;
+            let res = [];
+            while(true){
+                for(let j=left;j<=right;j++){
+                    res.push(matrix[top][j]);
+                }
+                if(++top>bottom)break;
+                for(let i=top;i<=bottom;i++){
+                    res.push(matrix[i][right]);
+                }
+                if(--right<left)break;
+                for(let j=right;j>=left;j--){
+                    res.push(matrix[bottom][j]);
+                }
+                if(--bottom<top)break;
+                for(let i=bottom;i>=top;i--){
+                    res.push(matrix[i][left]);
+                }
+                if(++left>right)break;
+            }
+            return res;
+        };
+        console.log(spiralOrder([[1,2,3],[4,5,6],[7,8,9]]));//[1,2,3,6,9,8,7,4,5]
+        console.log(spiralOrder([[1,2,3,4],[5,6,7,8],[9,10,11,12]]));//[1,2,3,4,8,12,11,10,9,5,6,7]
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

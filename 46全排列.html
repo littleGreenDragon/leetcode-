@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>46全排列</title>
+    <meta name="description" content="给定一个不含重复数字的数组 nums ，返回其 所有可能的全排列 。你可以 按任意顺序 返回答案。">
+    <script>
+        /**
+         * @param {number[]} nums
+         * @return {number[][]}
+         */
+        var permute = function(nums) {
+            function A(visited, path){
+                if(visited.size == nums.length){
+                    res.push([...path]);
+                }
+                for(let i=0;i<nums.length;i++){
+                    if(!visited.has(i)){//如果这个下标的数没用过
+                        visited.add(i);
+                        path.push(nums[i]);
+                        A(visited, path);
+                        path.pop();
+                        visited.delete(i);
+                    }
+                }
+            }
+            let res = [];
+            A(new Set(), []);
+            return res;
+        };
+        console.log(permute([1,2,3]));
+        console.log(permute([0,1]));
+        console.log(permute([1]));
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

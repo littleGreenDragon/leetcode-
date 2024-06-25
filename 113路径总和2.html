@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>113路径总和2</title>
+    <meta name="description" content="给你二叉树的根节点 root 和一个整数目标和 targetSum ，找出所有 从根节点到叶子节点 路径总和等于给定目标和的路径。
+    叶子节点 是指没有子节点的节点。">
+    <script>
+        /**
+         * Definition for a binary tree node.
+         * function TreeNode(val, left, right) {
+         *     this.val = (val===undefined ? 0 : val)
+         *     this.left = (left===undefined ? null : left)
+         *     this.right = (right===undefined ? null : right)
+         * }
+         */
+        function TreeNode(val,left, right){
+            this.val = val==undefined? 0:val;
+            this.left= left==undefined? null:left;
+            this.right= right==undefined? null:right;
+        }
+        function create_tree(list){
+            if(list.length == 0) return null;
+            let root = new TreeNode(list[0]);
+            let queue = [root];
+            for(let i=1;i<list.length;i+=2){
+                let parent = queue.shift();
+                if(list[i] != null){
+                    parent.left = new TreeNode(list[i]);
+                    queue.push(parent.left);
+                }
+                if(i+1<list.length&&list[i+1] != null){
+                    parent.right = new TreeNode(list[i+1]);
+                    queue.push(parent.right);
+                }
+            }
+            return root;
+        }
+        /**
+         * @param {TreeNode} root
+         * @param {number} targetSum
+         * @return {number[][]}
+         */
+        var pathSum = function(root, targetSum) {//dfs
+            if(root == null) return [];
+            let res = [];
+            function search_leaf(root, stack, sum){
+                stack.push(root.val);
+                sum += root.val;
+                if(root.left == null && root.right == null){//叶子节点
+                    if(sum == targetSum){
+                        res.push(JSON.parse(JSON.stringify(stack)));
+                    }
+                    return;
+                }
+                if(root.left != null){
+                    search_leaf(root.left, stack, sum);
+                    stack.pop();
+                }
+                if(root.right != null){
+                    search_leaf(root.right, stack, sum);
+                    stack.pop();
+                }
+            }
+            search_leaf(root, [], 0);
+            return res;
+        };
+        var pathSum2 = function(root, targetSum) {//bfs
+            if(root == null) return [];
+            let res = [];
+            let queue = [root];
+            let path_queue = [[root.val, root.val]]; //第一个值是和
+            while(queue.length>0){
+                let parent = queue.shift();
+                let parent_path = path_queue.shift();
+                if(parent.left == null && parent.right == null){
+                    if(parent_path[0] == targetSum){
+                        res.push(parent_path.slice(1));
+                    }
+                    continue;
+                }
+                if(parent.left != null){
+                    queue.push(parent.left);
+                    let temp = parent_path.slice();
+                    temp[0] += parent.left.val;
+                    temp.push(parent.left.val);
+                    path_queue.push(temp);
+                }
+                if(parent.right != null){
+                    queue.push(parent.right);
+                    let temp = parent_path.slice();
+                    temp[0] += parent.right.val;
+                    temp.push(parent.right.val);
+                    path_queue.push(temp);
+                }
+            }
+            return res;
+        };
+        
+        console.log(pathSum(create_tree([5,4,8,11,null,13,4,7,2,null,null,5,1]),22));//[[5,4,11,2],[5,8,4,5]]
+        console.log(pathSum(create_tree([1,2,3]),5));//[]
+
+        console.log(pathSum2(create_tree([5,4,8,11,null,13,4,7,2,null,null,5,1]),22));//[[5,4,11,2],[5,8,4,5]]
+        console.log(pathSum2(create_tree([1,2,3]),5));//[]
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>160相交链表</title>
+    <meta name="description" content="给你两个单链表的头节点 headA 和 headB ，请你找出并返回两个单链表相交的起始节点。如果两个链表不存在相交节点，返回 null 。">
+    <script>
+                /**
+         * Definition for singly-linked list.
+         * function ListNode(val, next) {
+         *     this.val = (val===undefined ? 0 : val)
+         *     this.next = (next===undefined ? null : next)
+         * }
+         */
+         function ListNode(val, next) {
+            this.val = (val===undefined ? 0 : val)
+            this.next = (next===undefined ? null : next)
+        }
+        function create_list(list){
+            let l_head = null;
+            let l_tail;
+            let in_number;
+            for(let i = 0; i < list.length; i++)
+            {
+                in_number = list[i];
+                if(! l_head){
+                    l_head = new ListNode(in_number, undefined);
+                    l_tail = l_head;
+                }else{
+                    l_tail.next = new ListNode(in_number, undefined);
+                    l_tail = l_tail.next;
+                }
+            }
+            return l_head;
+        }
+        /**
+         * @param {ListNode} headA
+         * @param {ListNode} headB
+         * @return {ListNode}
+         */
+        var getIntersectionNode = function(headA, headB) {
+            let i_a = headA;
+            let i_b = headB;
+            while(i_a != i_b){
+                i_a = i_a ? i_a.next : headB;
+                i_b = i_b ? i_b.next : headA;
+            }
+            return i_a;
+        };
+
+        console.log(getIntersectionNode(create_list([4,1,8,4,5]),create_list([5,6,1,8,4,5])));//8
+        console.log(getIntersectionNode(create_list([1,9,1,2,4]), create_list([3,2,4])));//2
+        console.log(getIntersectionNode(create_list([2,6,4]), create_list([1,5])));//null
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

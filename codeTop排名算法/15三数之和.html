@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>15三数之和</title>
+    <meta name="description" content="给你一个整数数组 nums ，判断是否存在三元组 [nums[i], nums[j], nums[k]] 满足 i != j、i != k 且 j != k ，同时还满足 nums[i] + nums[j] + nums[k] == 0 。请
+
+    你返回所有和为 0 且不重复的三元组。
+    
+    注意：答案中不可以包含重复的三元组。">
+    <script>
+        /**
+         * 7:22-7:37
+         * @param {number[]} nums
+         * @return {number[][]}
+         */
+        var threeSum = function(nums) {
+            nums.sort((a,b)=>{
+                return a-b;
+            });
+            let dul = new Set();
+            let res = [];
+            for(let i=0;i<nums.length-2;i++){
+                let start = i+1;
+                let end = nums.length-1;
+                while(start < end){
+                    if(nums[i] + nums[start] + nums[end] == 0){
+                        if(!dul.has([nums[i], nums[start], nums[end]].toString())){
+                            dul.add([nums[i], nums[start], nums[end]].toString());
+                            res.push([nums[i], nums[start], nums[end]]);
+                        }
+                        start++;
+                        end--;
+                    }else if(nums[i] + nums[start] + nums[end] > 0){
+                        end--;
+                    }else{
+                        start++;
+                    }
+                }
+            }
+            return res;
+        };
+        console.log(threeSum([-1,0,1,2,-1,-4]));//[[-1,-1,2],[-1,0,1]]
+        console.log(threeSum([0,1,1]));//[]
+        console.log(threeSum([0,0,0]));//[[0,0,0]]
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

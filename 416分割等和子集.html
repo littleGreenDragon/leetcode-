@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>416分割等和子集</title>
+    <meta name="description" content="给你一个 只包含正整数 的 非空 数组 nums 。请你判断是否可以将这个数组分割成两个子集，使得两个子集的元素和相等。">
+    <script>
+        /**
+         * @param {number[]} nums
+         * @return {boolean}
+         */
+        var canPartition = function(nums) {//动态规划，判断每个数是否加入第一个数组的抉择，背包大小是一半的sum,dp[i][j]表示前i个数参与下能否组成j
+            if(nums.length<=1) return false;//个数不满两个不能平分
+            let sum = 0;
+            let max_value = -Number.MAX_VALUE;
+            nums.forEach((item)=>{
+                sum+=item;
+                max_value = Math.max(max_value,item);
+            });
+            if(max_value>sum/2 || sum%2==1) return false;//总和奇数或最大值大于一半总和一定不能平分
+            sum = sum/2;
+            let dp = Array.from({length:nums.length+1}, ()=>{
+                let temp = new Array(sum+1);
+                temp[0] = true;//背包大小为0时，不用选数就能组成
+                return temp;
+            });
+            for(let i=0;i<=nums.length;i++){
+                for(let j=1;j<=sum;j++){
+                    if(i==0){
+                        dp[i][j] = false;//没有数的时候一定组成不了
+                    }else{
+                        if(nums[i-1]<=j){//放得下
+                            dp[i][j] = dp[i-1][j-nums[i-1]] || dp[i-1][j];//选或不选
+                        }else{
+                            dp[i][j] = dp[i-1][j];
+                        }
+                    }
+                }
+            }
+            return dp[nums.length][sum];
+        };
+        console.log(canPartition([1,5,11,5]));//true
+        console.log(canPartition([1,2,3,5]));//false
+        console.log(canPartition([2,2,1,1]));//true
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

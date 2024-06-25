@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>75搜索二维矩阵</title>
+    <meta name="description" content="给你一个满足下述两条属性的 m x n 整数矩阵：每行中的整数从左到右按非严格递增顺序排列。
+    每行的第一个整数大于前一行的最后一个整数。
+    给你一个整数 target ，如果 target 在矩阵中，返回 true ；否则，返回 false ">
+    <script>
+        /**
+         * @param {number[][]} matrix
+         * @param {number} target
+         * @return {boolean}
+         */
+        var searchMatrix1 = function(matrix, target) {//先按第一列搜索出在那一行，再在这一行找
+            let left = 0;
+            let right = matrix.length-1;
+            while(left<=right){
+                let mid = Math.floor((left+right)/2);
+                if(matrix[mid][0] == target){
+                    return true;
+                }else if(matrix[mid][0] < target){
+                    left = mid+1;
+                }else{
+                    right = mid-1;
+                }
+            }
+            let line = left-1;//left=1->0行
+            if(line<0) return false;
+            left = 0;
+            right = matrix[line].length;
+            while(left<=right){
+                let mid = Math.floor((left+right)/2);
+                if(matrix[line][mid] == target){
+                    return true;
+                }else if (matrix[line][mid] < target){
+                    left = mid+1;
+                }else{
+                    right = mid-1;
+                }
+            }
+            return false;
+        };
+        var searchMatrix2 = function(matrix, target) {//把所有行拼成一行，一次性查找
+            let hang = matrix.length;
+            let lie = matrix[0].length;
+            let left = 0;
+            let right = hang * lie -1;
+            while(left <= right){
+                let mid = Math.floor((left+right)/2);
+                let i = Math.floor(mid/lie);
+                let j = Math.floor(mid%lie);
+                if(matrix[i][j] == target){
+                    return true;
+                }else if(matrix[i][j] < target){
+                    left = mid+1;
+                }else{
+                    right = mid-1;
+                }
+            }
+            return false;
+        };
+        
+        console.log(searchMatrix1(matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 3));//true
+        console.log(searchMatrix1(matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 13));//false
+
+        console.log(searchMatrix2(matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 3));//true
+        console.log(searchMatrix2(matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 13));//false
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

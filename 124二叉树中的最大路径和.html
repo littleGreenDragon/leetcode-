@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>124二叉树中的最大路径和</title>
+    <meta name="description" content="二叉树中的 路径 被定义为一条节点序列，序列中每对相邻节点之间都存在一条边。同一个节点在一条路径序列中 至多出现一次 。该路径 至少包含一个 节点，且不一定经过根节点。
+
+    路径和 是路径中各节点值的总和。
+    
+    给你一个二叉树的根节点 root ，返回其 最大路径和 。">
+    <script>
+        /**
+         * Definition for a binary tree node.
+         * function TreeNode(val, left, right) {
+         *     this.val = (val===undefined ? 0 : val)
+         *     this.left = (left===undefined ? null : left)
+         *     this.right = (right===undefined ? null : right)
+         * }
+         */
+        function TreeNode(val, left, right){
+            this.val = val==undefined? 0:val;
+            this.left = left==undefined? null:left;
+            this.right = right==undefined? null:right;
+        }
+        function create_tree(list){
+            if(list.length == 0) return null;
+            let root = new TreeNode(list[0]);
+            let queue = [root];
+            for(let i=1;i<list.length;i+=2){
+                let parent = queue.shift();
+                if(list[i] != null){
+                    parent.left = new TreeNode(list[i]);
+                    queue.push(parent.left);
+                }
+                if(i+1<list.length && list[i+1]!=null){
+                    parent.right = new TreeNode(list[i+1]);
+                    queue.push(parent.right);
+                }
+            }
+            return root;
+        }
+        /**
+         * @param {TreeNode} root
+         * @return {number}
+         */
+        var maxPathSum = function(root) {//一条最大路径只有两种情况，一种是出现同层级的节点组成的路径，一种是只有父子节点参与的路径，递归思维，那么以一个节点作为两端或中间时的最大路径是本节点、本节点+左子树、本节点+右子树、本节点加两个子树的最大值，注意当本节点+两个子树是最大值时就不能再加入父节点了，所以从本节点+左子树、本节点+右子树和本节点三个中选取最大值返回，用于连接父节点
+            let max = -Number.MAX_VALUE;
+            function search(root){
+                if(root.left == null && root.right == null){
+                    max = Math.max(max, root.val);
+                    return root.val;
+                }
+                let left_max = 0;
+                if(root.left != null){
+                    left_max = search(root.left);
+                }
+                let right_max = 0;
+                if(root.right != null){
+                    right_max = search(root.right);
+                }
+                let node_max = Math.max(root.val, root.val+left_max, root.val+right_max);
+                max = Math.max(max, root.val, root.val+left_max, root.val+right_max, root.val+left_max+right_max);
+                return node_max;
+            }
+            if(root == null) return 0;
+            search(root);
+            return max;
+        };
+        console.log(maxPathSum(create_tree( [-10,9,20,null,null,15,7])));//42
+        console.log(maxPathSum(create_tree( [1,2,3])));//6
+        console.log(maxPathSum(create_tree( [0])));//0
+        console.log(maxPathSum(create_tree( [-2,-1])));//-1
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

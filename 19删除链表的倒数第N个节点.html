@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>19删除链表的倒数第N个节点</title>
+    <meta name="description" content="给你一个链表，删除链表的倒数第 n 个结点，并且返回链表的头结点。">
+    <script>
+        /**
+         * Definition for singly-linked list.
+         * function ListNode(val, next) {
+         *     this.val = (val===undefined ? 0 : val)
+         *     this.next = (next===undefined ? null : next)
+         * }
+         */
+         function ListNode(val, next) {
+            this.val = (val===undefined ? 0 : val)
+            this.next = (next===undefined ? null : next)
+        }
+        function create_list(list){
+            let l_head = null;
+            let l_tail;
+            let in_number;
+            for(let i = 0; i < list.length; i++)
+            {
+                in_number = list[i];
+                if(! l_head){
+                    l_head = new ListNode(in_number, undefined);
+                    l_tail = l_head;
+                }else{
+                    l_tail.next = new ListNode(in_number, undefined);
+                    l_tail = l_tail.next;
+                }
+            }
+            return l_head;
+        }
+        /**
+         * @param {ListNode} head
+         * @param {number} n
+         * @return {ListNode}
+         * 
+         * 样例1
+         * 输入：head = [1,2,3,4,5], n = 2
+         * 输出：[1,2,3,5]
+         * 
+         * 样例 2：
+         * 输入：head = [1], n = 1
+         * 输出：[]
+         * 
+         * 样例 3：
+         * 输入：head = [1,2], n = 1
+         * 输出：[1]
+         */
+        var removeNthFromEnd1 = function(head, n) {//快慢指针，两个指针差n，快指针到尾了，慢指针位置就是target
+            let fast = head;
+            let slow = head;
+            for(let i = 0; i < n; i++){//拉开差距
+                fast = fast.next;
+            }
+            while(fast && fast.next){//遍历到末尾，正常来说fast指向最后一个元素
+                fast = fast.next;
+                slow = slow.next;
+            }
+            if(fast == null){//如果指向的不是最后一个元素，说明拉开距离时已经走到末尾，那么要删除的是头
+                head = head.next;
+            }else{//否则就是删除中间元素
+                slow.next = slow.next.next;
+            }
+            return head;
+        };
+        var removeNthFromEnd2 = function(head, n) {//添加一个头节点，方便删除
+            let dummy = new ListNode(undefined, head);
+            let fast = dummy;
+            let slow = dummy;
+            for(let i = 0; i <= n; i++){//拉开差距，n+1的距离
+                fast = fast.next;
+            }
+            while(fast){//遍历到末尾，直到空
+                fast = fast.next;
+                slow = slow.next;
+            }
+            slow.next = slow.next.next;
+            return dummy.next;
+        };
+        console.log(removeNthFromEnd1(create_list([1,2,3,4,5]),2));
+        console.log(removeNthFromEnd1(create_list([1]),1));
+        console.log(removeNthFromEnd1(create_list([1,2]),1));
+
+        console.log(removeNthFromEnd2(create_list([1,2,3,4,5]),2));
+        console.log(removeNthFromEnd2(create_list([1]),1));
+        console.log(removeNthFromEnd2(create_list([1,2]),1));
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

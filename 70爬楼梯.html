@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>70爬楼梯</title>
+    <meta name="description" content="假设你正在爬楼梯。需要 n 阶你才能到达楼顶。每次你可以爬 1 或 2 个台阶。你有多少种不同的方法可以爬到楼顶呢？">
+    <script>
+        /**
+         * @param {number} n
+         * @return {number}
+         */
+        var climbStairs1 = function(n) {//爬到第n阶台阶的个数等于在n-1台阶再跨一步和n-2台阶再跨两步，那么f(n) = f(n-1)+f(n-2)
+            let f = [];
+            f[1] = 1;
+            f[2] = 2;
+            if(n<=2) return f[n];
+            for(let i=3;i<=n;i++){
+                f[i] = f[i-1] + f[i-2];
+            }
+            return f[n];
+        };
+        var climbStairs2 = function(n) {//递归写法,会超时
+            if(n == 1 || n == 2) return n;
+            return climbStairs2(n-1) + climbStairs2(n-2);
+        };
+        var climbStairs2 = function(n) {//不使用额外数组
+            if(n==1 || n==2) return n;
+            let first = 1;
+            let second = 2;
+            let res;
+            for(let i=3;i<=n;i++){
+                res = first + second;
+                first =second;
+                second = res;
+            }
+            return res;
+        };
+
+        console.log(climbStairs1(2));
+        console.log(climbStairs1(3));
+        console.log(climbStairs1(44));
+
+        console.log(climbStairs2(2));
+        console.log(climbStairs2(3));
+        // console.log(climbStairs2(44));
+
+        console.log(climbStairs2(2));
+        console.log(climbStairs2(3));
+        console.log(climbStairs2(44));
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

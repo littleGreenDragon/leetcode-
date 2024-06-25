@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3无重复的最长子串</title>
+    <meta name="description" content="给定一个字符串 s ，请你找出其中不含有重复字符的 最长 子串的长度。">
+    <script>
+        /**
+         * 5:26-5:31
+         * @param {string} s
+         * @return {number}
+         */
+        var lengthOfLongestSubstring = function(s) {
+            if(s.length == 0) return 0;
+            let max = 0;
+            let char_set = new Set();
+            let start = 0;
+            for(let i=0;i<s.length;i++){
+                if(!char_set.has(s[i])){
+                    char_set.add(s[i]);
+                }else{
+                    while(char_set.has(s[i])){
+                        char_set.delete(s[start++]);
+                    }
+                    char_set.add(s[i]);
+                }
+                max = Math.max(max, char_set.size);
+            }
+            return max;
+        };
+        console.log(lengthOfLongestSubstring("abcabcbb"));//3
+        console.log(lengthOfLongestSubstring("bbbbb"));//1
+        console.log(lengthOfLongestSubstring("pwwkew"));//3
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

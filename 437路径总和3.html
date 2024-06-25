@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>437路径总和</title>
+    <meta name="description" content="给定一个二叉树的根节点 root ，和一个整数 targetSum ，求该二叉树里节点值之和等于 targetSum 的 路径 的数目。
+
+    路径 不需要从根节点开始，也不需要在叶子节点结束，但是路径方向必须是向下的（只能从父节点到子节点）。">
+    <script>
+        /**
+         * Definition for a binary tree node.
+         * function TreeNode(val, left, right) {
+         *     this.val = (val===undefined ? 0 : val)
+         *     this.left = (left===undefined ? null : left)
+         *     this.right = (right===undefined ? null : right)
+         * }
+         */
+         function TreeNode(val, left, right){
+            this.val = val==undefined? 0:val;
+            this.left = left==undefined? null:left;
+            this.right = right==undefined? null:right;
+        }
+        function create_tree(list){
+            if(list.length == 0){
+                return null;
+            }
+            let root = new TreeNode(list[0]);
+            let queue = [root];
+            for(let i=1;i<list.length;i+=2){
+                let parent = queue.shift();
+                if(list[i]!=null){
+                    parent.left = new TreeNode(list[i]);
+                    queue.push(parent.left);
+                }
+                if( i+1<list.length&&list[i+1]!=null){
+                    parent.right = new TreeNode(list[i+1]);
+                    queue.push(parent.right);
+                }
+            }
+            return root;
+        }
+        /**
+         * @param {TreeNode} root
+         * @param {number} targetSum
+         * @return {number}
+         */
+        var pathSum = function(root, targetSum) {//以每个节点为起点，算出其到叶子结点之间是否存在一条路径满足要求
+            if(root == null) return 0;
+            let res = 0;
+            function search(root, sum){
+                sum += root.val;
+                if(sum == targetSum){
+                    res+=1;
+                }
+                if(root.left != null){
+                    search(root.left, sum);
+                }
+                if(root.right != null){
+                    search(root.right, sum);
+                }
+            }
+            //对每个节点都进行一次search
+            let queue = [root];
+            while(queue.length>0){
+                let parent = queue.shift();
+                search(parent, 0);
+                if(parent.left!=null) queue.push(parent.left);
+                if(parent.right!=null) queue.push(parent.right);
+            }
+            return res;
+        };
+        var pathSum = function(root, targetSum) {//前缀和
+            let map = new Map();//只存储根节点到叶子节点的前缀和,键是前缀和，值为个数
+            let res = 0;
+            function search(root, sum){//栈存储路径，在弹栈的时候，需要修改map
+                sum += root.val;
+                if(map.has(sum-targetSum)){
+                    res += map.get(sum-targetSum);
+                }
+                if(sum == targetSum){//因为map中没有存储一个节点都没有值为0的时候
+                    res += 1;
+                }
+                if(map.has(sum)){//记录前缀和，必须先算了存不存在，再记录，不然当targetSum是0的时候，就会因为自身和自身消除
+                    map.set(sum, map.get(sum)+1);
+                }else{
+                    map.set(sum, 1);
+                }
+                if(root.left != null){
+                    search(root.left, sum);//这一步结束之后会往map里添加sum+roo.left
+                    map.set(sum+root.left.val, map.get(sum+root.left.val)-1);
+                }
+                if(root.right != null){
+                    search(root.right, sum);
+                    map.set(sum+root.right.val, map.get(sum+root.right.val)-1);
+                }
+            }
+            if(root == null) return res;
+            search(root, 0);
+            return res;
+        };
+
+        console.log(pathSum(create_tree([10,5,-3,3,2,null,11,3,-2,null,1]),8));//3
+        console.log(pathSum(create_tree([5,4,8,11,null,13,4,7,2,null,null,5,1]),22));//3
+        /* [4 11 7] [5 4 11 2] [5 8 4 5]
+                5
+          4          8
+       11 null    13      4
+     7    2    null null 5  1
+        */
+        console.log(pathSum(create_tree([1]),0));//0
+        console.log(pathSum(create_tree([0,1,1]),1));//4
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

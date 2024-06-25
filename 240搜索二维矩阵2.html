@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>240搜索二维矩阵</title>
+    <meta name="description" content="编写一个高效的算法来搜索 m x n 矩阵 matrix 中的一个目标值 target 。该矩阵具有以下特性：
+    每行的元素从左到右升序排列。
+    每列的元素从上到下升序排列。">
+    <script>
+        /**
+         * @param {number[][]} matrix
+         * @param {number} target
+         * @return {boolean}
+         */
+        var searchMatrix1 = function(matrix, target) {//挨个找一遍即可,时间复杂度mn，超时
+            for(let i=0;i<matrix.length;i++){
+                for(let j=0;j<matrix[i].length;j++){
+                    if(matrix[i][j] == target){
+                        return true;
+                    }
+                }
+            }
+            return false;
+        };
+        var searchMatrix2 = function(matrix, target) {//对每一行进行二分查找，时间复杂度mlogn，通过
+            function binary_search(line){
+                let left = 0;
+                let right = matrix[line].length-1; 
+                while(left<=right){
+                    let mid = Math.floor((left+right)/2);
+                    if(matrix[line][mid] == target){
+                        return true;
+                    } else if(matrix[line][mid] < target){
+                        left = mid+1;
+                    }else{
+                        right = mid-1;
+                    }
+                }
+                return false;
+            }
+            for(let i=0;i<matrix.length;i++){
+                if(binary_search(i)){
+                    return true;
+                }
+            }
+            return false;
+        };
+        var searchMatrix3 = function(matrix, target) {//z型查找,即可以从右上角或左下角作为起点，然后进行移动查找即可
+            //使用右上角作为起点
+            let i=0;
+            let j=matrix[0].length-1;
+            while(i<matrix.length && j>=0 && matrix[i][j] != target){
+                if(matrix[i][j] < target){
+                    i++;
+                }else{
+                    j--;
+                }
+            }
+            if(i<matrix.length && j>=0){
+                return true;
+            }
+            return false;
+        };
+        var searchMatrix4 = function(matrix, target) {//z型查找,即可以从右上角或左下角作为起点，然后进行移动查找即可
+            //使用左下角作为起点
+            let i=matrix.length-1;
+            let j=0;
+            while(i>=0 && j< matrix[0].length && matrix[i][j] != target){
+                if(matrix[i][j] < target){
+                    j++;
+                }else{
+                    i--;
+                }
+            }
+            if(i>=0 && j< matrix[0].length){
+                return true;
+            }
+            return false;
+        };
+
+
+        console.log(searchMatrix1([[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]],5));//true
+        console.log(searchMatrix1([[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]],20));//false
+
+        console.log(searchMatrix2([[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]],5));//true
+        console.log(searchMatrix2([[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]],20));//false
+
+        console.log(searchMatrix3([[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]],5));//true
+        console.log(searchMatrix3([[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]],20));//false
+
+        console.log(searchMatrix4([[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]],5));//true
+        console.log(searchMatrix4([[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]],20));//false
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

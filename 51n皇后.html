@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>52n皇后</title>
+    <meta name="description" content="按照国际象棋的规则，皇后可以攻击与之处在同一行或同一列或同一斜线上的棋子。
+    n 皇后问题 研究的是如何将 n 个皇后放置在 n×n 的棋盘上，并且使皇后彼此之间不能相互攻击。
+    给你一个整数 n ，返回所有不同的 n 皇后问题 的解决方案。 
+    每一种解法包含一个不同的 n 皇后问题 的棋子放置方案，该方案中 'Q' 和 '.' 分别代表了皇后和空位。">
+    <script>
+        /**
+         * @param {number} n
+         * @return {string[][]}
+         */
+        var solveNQueens = function(n) {
+            let res = [];
+            let visited = new Set();
+            let forword =new Map();
+            let backword = new Map();
+            function search(path, visited, forword, backword, rol){
+                if(path.length == n){
+                    let temp = [...path];
+                    for(let i=0;i<temp.length;i++){
+                        let point = new Array(n).fill('.');
+                        point[temp[i]] = 'Q';
+                        temp[i] = point.join('');
+                    }
+                    res.push(temp);
+                }
+                for(let col=0;col<n;col++){
+                    if(!forword.has(rol-col)) forword.set(rol-col, false);
+                    if(!backword.has(rol+col)) backword.set(rol+col, false);
+                    if(!visited.has(col) && !forword.get(rol-col) && !backword.get(rol+col)){
+                        forword.set(rol-col, !forword.get(rol-col));
+                        backword.set(rol+col, !backword.get(rol+col));
+                        visited.add(col);
+                        path.push(col);
+                        search(path, visited, forword, backword, rol+1);
+                        forword.set(rol-col, !forword.get(rol-col));
+                        backword.set(rol+col, !backword.get(rol+col));
+                        visited.delete(col);
+                        path.pop();
+                    }
+                }
+            }
+            search([], visited, forword, backword, 0);
+            return res;
+        };
+        console.log(solveNQueens(4));//[[".Q..","...Q","Q...","..Q."],["..Q.","Q...","...Q",".Q.."]]
+        console.log(solveNQueens(1));//[["Q"]]
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>11盛最多水的容器</title>
+    <meta name="description" content="给定一个长度为 n 的整数数组 height 。有 n 条垂线，第 i 条线的两个端点是 (i, 0) 和 (i, height[i]) 。找出其中的两条线，使得它们与 x 轴共同构成的容器可以容纳最多的水。 返回容器可以储存的最大水量。说明：你不能倾斜容器。">
+    <script>
+        /**
+         * @param {number[]} height
+         * @return {number}
+         * 
+         * 示例1
+         * 输入：[1,8,6,2,5,4,8,3,7]
+         * 输出：49 
+         * 解释：(8-1) * 7,其中8和1是下标，对应下标位置高度是8 7，取最小作为高
+         * 示例 2：
+         * 输入：height = [1,1]
+         * 输出：1
+         */
+        var maxArea = function(height) {//从最长开始计算，每次移动更短的指针（因为移动更高的指针，只会在等高下更小）
+            let start = 0;
+            let end = height.length - 1;
+            let max_area = 0;
+            let water_height;
+            let water_width;
+            while(start < end){
+                water_width = end - start;
+                if(height[start] < height[end]){
+                    water_height = height[start];
+                    start ++;
+                }else{
+                    water_height = height[end];
+                    end --;
+                }
+                max_area = Math.max(water_height*water_width, max_area);
+            }
+            return max_area;
+        };
+        console.log(maxArea([1,8,6,2,5,4,8,3,7]));
+        console.log(maxArea([1,1]));
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

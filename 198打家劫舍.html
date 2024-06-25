@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>198打家劫舍</title>
+    <meta name="description" content="你是一个专业的小偷，计划偷窃沿街的房屋。每间房内都藏有一定的现金，影响你偷窃的唯一制约因素就是相邻的房屋装有相互连通的防盗系统，如果两间相邻的房屋在同一晚上被小偷闯入，系统会自动报警。给定一个代表每个房屋存放金额的非负整数数组，计算你 不触动警报装置的情况下 ，一夜之内能够偷窃到的最高金额。">
+    <script>
+        /**
+         * @param {number[]} nums
+         * @return {number}
+         */
+        var rob1 = function(nums) {//i位置做多可拿的钱等于i-2位置和本位置一共的钱 与 i-1位置的金额（前面一共最高的金额）进行比较。s[i] = max(s[i-1], s[i-2]+n[i])
+            if(nums.length == 1) return nums[0];
+            let steal = [nums[0], Math.max(nums[0], nums[1])];
+            for(let i=2;i<nums.length;i++){
+                steal.push(Math.max(steal[i-2]+nums[i], steal[i-1]));
+            }
+            return steal[nums.length-1];
+        };
+        var rob2 = function(nums) {//i位置做多可拿的钱等于i-2位置和本位置一共的钱 与 i-1位置的金额（前面一共最高的金额）进行比较.
+            if(nums.length == 1) return nums[0];
+            let first = nums[0];
+            let second = Math.max(first, nums[1]);
+            let now = second;
+            for(let i=2;i<nums.length;i++){
+                now = Math.max(first+nums[i], second);
+                first = second;
+                second = now;
+            }
+            return now;
+        };
+        
+        console.log(rob1([1,2,3,1]));//4
+        console.log(rob1([2,7,9,3,1]));//12
+
+        console.log(rob2([1,2,3,1]));//4
+        console.log(rob2([2,7,9,3,1]));//12
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

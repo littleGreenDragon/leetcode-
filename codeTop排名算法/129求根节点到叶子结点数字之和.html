@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>129求根节点到叶子结点数字之和</title>
+    <meta name="description" content="给你一个二叉树的根节点 root ，树中每个节点都存放有一个 0 到 9 之间的数字。
+    每条从根节点到叶节点的路径都代表一个数字：
+    
+    例如，从根节点到叶节点的路径 1 -> 2 -> 3 表示数字 123 。
+    计算从根节点到叶节点生成的 所有数字之和 。
+    
+    叶节点 是指没有子节点的节点。">
+    <script>
+        /**
+         * 6:45-6:54
+         * Definition for a binary tree node.
+         * function TreeNode(val, left, right) {
+         *     this.val = (val===undefined ? 0 : val)
+         *     this.left = (left===undefined ? null : left)
+         *     this.right = (right===undefined ? null : right)
+         * }
+         */
+        function TreeNode(val, left, right){
+            this.val = val==undefined? 0:val;
+            this.left = left==undefined? null:left;
+            this.right = right==undefined? null:right;
+        }
+        function create_tree(list){
+            if(list.length == 0) return null;
+            let root = new TreeNode(list[0]);
+            let queue = [root];
+            for(let i=1;i<list.length;i+=2){
+                let parent = queue.shift();
+                if(list[i] != null){
+                    parent.left = new TreeNode(list[i]);
+                    queue.push(parent.left);
+                }
+                if(i+1<list.length && list[i+1] != null){
+                    parent.right = new TreeNode(list[i+1]);
+                    queue.push(parent.right);
+                }
+            }
+            return root;
+        }
+        /**
+         * @param {TreeNode} root
+         * @return {number}
+         */
+        var sumNumbers = function(root) {
+            let res = 0;
+            function search_leaf(root, path){
+                path.push(root.val);
+                if(root.left == null && root.right == null){
+                    res += Number(path.join(''));
+                    return;
+                }
+                if(root.left != null){
+                    search_leaf(root.left, path);
+                    path.pop();
+                }
+                if(root.right != null){
+                    search_leaf(root.right, path);
+                    path.pop();
+                }
+            }
+            if(root == null) return 0;
+            search_leaf(root, []);
+            return res;
+        };
+        console.log(sumNumbers(create_tree([1,2,3])));//25
+        console.log(sumNumbers(create_tree([4,9,0,5,1])));//1026
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

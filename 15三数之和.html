@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三数之和</title>
+    <meta name="description" content="给你一个整数数组 nums ，判断是否存在三元组 [nums[i], nums[j], nums[k]] 满足 i != j、i != k 且 j != k ，同时还满足 nums[i] + nums[j] + nums[k] == 0 。请你返回所有和为 0 且不重复的三元组。注意：答案中不可以包含重复的三元组。">
+    <script >
+        /**
+         * @param {number[]} nums
+         * @return {number[][]}
+         *
+         * 样例1
+         * 输入：nums = [-1,0,1,2,-1,-4]
+         * 输出：[[-1,-1,2],[-1,0,1]]
+         * 解释：
+         * nums[0] + nums[1] + nums[2] = (-1) + 0 + 1 = 0 。
+         * nums[1] + nums[2] + nums[4] = 0 + 1 + (-1) = 0 。
+         * nums[0] + nums[3] + nums[4] = (-1) + 2 + (-1) = 0 。
+         * 不同的三元组是 [-1,0,1] 和 [-1,-1,2] 。
+         * 注意，输出的顺序和三元组的顺序并不重要。
+         * 
+         * 样例2：
+         * 输入：nums = [0,1,1]
+         * 输出：[]
+         * 解释：唯一可能的三元组和不为 0 。
+         * 
+         * 样例3：
+         * 输入：nums = [0,0,0]
+         * 输出：[[0,0,0]]
+         * 解释：唯一可能的三元组和为 0 。
+         */
+        var threeSum = function(nums) {
+            nums.sort(function(num1, num2){
+                return num1-num2;
+            });//排序
+            let answer = [];
+            for(let i = 0; i < nums.length-2; i++){//用于控制两数之和等于多少，每个数都可以作为一次target，并且控制另外两个数值在其右侧，且i j k 不能是同一个数，因此循环最多length-2
+                if(i==0 || nums[i-1] != nums[i]){//根据数值判定重复，一样的数不能做两次target
+                    let start = i + 1;//两个右侧的数值初始位置
+                    let end = nums.length - 1;
+                    while(start < end){
+                        if(nums[i] + nums[start] + nums[end] == 0){//如果满足target，只有满足条件的时候需要去重
+                            answer.push([nums[i], nums[start], nums[end]]);
+                            start ++;
+                            end --;
+                            while(nums[start] == nums[start - 1]){
+                                start ++;
+                            }
+                            while(nums[end] == nums[end + 1]){
+                                end --;
+                            }
+                        }else if(nums[i] + nums[start] + nums[end] > 0){//过大了
+                            end --;
+                        }else if(nums[i] + nums[start] + nums[end] < 0){//过小了
+                            start ++;
+                        }
+                    }
+                }
+            }
+            return answer;
+        };
+        console.log(threeSum([-1,0,1,2,-1,-4]));
+        console.log(threeSum([0,1,1]));
+        console.log(threeSum([0,0,0]));
+        console.log(threeSum([0,0,0,0]));
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

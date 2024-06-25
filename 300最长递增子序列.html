@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>300最长递增子序列</title>
+    <meta name="description" content="给你一个整数数组 nums ，找到其中最长严格递增子序列的长度。
+    子序列 是由数组派生而来的序列，删除（或不删除）数组中的元素而不改变其余元素的顺序。例如，[3,6,2,7] 是数组 [0,3,1,6,2,2,7] 的
+    子序列
+    。">
+    <script>
+        /**
+         * @param {number[]} nums
+         * @return {number}
+         */
+        var lengthOfLIS = function(nums) {//动态规划，每次以某个数字为尾时，其作为子序列的最后一个数前面最大有多少个连续比自己小的数
+            let dp = new Array(nums.length).fill(1);
+            let max_length = 1;
+            for(let i=0;i<nums.length;i++){//i作为子序列尾时，最大连续小的个数
+                for(let j=0;j<i;j++){
+                    if(nums[j] < nums[i]){
+                        dp[i] = Math.max(dp[j]+1,dp[i]);
+                    }
+                }
+                max_length =Math.max(max_length, dp[i]);
+            }
+            return max_length;
+        };
+        console.log(lengthOfLIS([10,9,2,5,3,7,101,18]));//4
+        console.log(lengthOfLIS([0,1,0,3,2,3]));//4
+        console.log(lengthOfLIS([7,7,7,7,7,7,7]));//1
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

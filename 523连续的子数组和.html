@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>523连续的子数组和</title>
+    <meta name="description" content="给你一个整数数组 nums 和一个整数 k ，编写一个函数来判断该数组是否含有同时满足下述条件的连续子数组：子数组大小 至少为 2 ，且
+    子数组元素总和为 k 的倍数。
+    如果存在，返回 true ；否则，返回 false 。
+    如果存在一个整数 n ，令整数 x 符合 x = n * k ，则称 x 是 k 的一个倍数。0 始终视为 k 的一个倍数。">
+    <script>
+        /**
+         * @param {number[]} nums
+         * @param {number} k
+         * @return {boolean}
+         * 
+         * 1 <= nums.length <= 105
+         * 0 <= nums[i] <= 109
+         * 0 <= sum(nums[i]) <= 231 - 1
+         * 1 <= k <= 231 - 1
+         */
+        var checkSubarraySum = function(nums, k) {//和560题目不一样的地方是，不需要算出来多少个，所以map的值可以存当前前缀和的尾（长度），那么两个前缀和的差值就是子序列长度了，判断是否存在len>2的即可；注意前缀和是有可能存在多个前缀一样的，这个时候只记录最早的
+            let num_map = new Map();
+            num_map.set(0,-1);
+            let pre_sum = 0;
+            for(let i=0;i< nums.length;i++){//计算所有前缀和
+                // if(pre_sum + nums[i] > pre_sum){
+                //     pre_sum += nums[i];
+                // }else{
+                //     continue;
+                // }
+                pre_sum += nums[i];//原因：就算是[5,0,0,0] k = 2， 中间那一段[0,0,0]算k的0倍，也算true
+                if(!num_map.has(pre_sum % k)){ 
+                    num_map.set(pre_sum % k, i);
+                }else{//余数相同的到时候拿出来减一下，把余数减掉了就一定是k的倍数了
+                    if(i - num_map.get(pre_sum % k) > 1){
+                        return true;
+                    }
+                }
+            }
+            return false;
+        };
+        console.log(checkSubarraySum([23,2,4,6,7], 6));//true
+        console.log(checkSubarraySum([23,2,6,4,7], 6));//true
+        console.log(checkSubarraySum([23,2,6,4,7], 13));//false
+        console.log(checkSubarraySum([23,0,0,0,0], 23));//true
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

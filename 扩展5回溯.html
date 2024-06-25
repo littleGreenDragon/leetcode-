@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>扩展5回溯</title>
+    <script>
+        function TreeNode(val, left, right){
+            this.val = val==undefined? 0:val;
+            this.left = left==undefined?null:left;
+            this.right = right==undefined?null:right;
+        }
+        function create_tree(list){
+            if(list.length == 0) return null;
+            let root = new TreeNode(list[0]);
+            let queue = [root];
+            for(let i=1;i<list.length;i+=2){
+                let parent = queue.shift();
+                if(list[i]!=null){
+                    parent.left = new TreeNode(list[i]);
+                    queue.push(parent.left);
+                }
+                if(i+1<list.length && list[i+1]!=null){
+                    parent.right = new TreeNode(list[i+1]);
+                    queue.push(parent.right);
+                }
+            }
+            return root;
+        }
+        //例子1：给定一个二叉树，搜索并记录所有值为7的节点并返回节点列表
+        function preOrder(root, res){
+            if(root == null){
+                return;
+            }
+            if(root.val == 7){
+                res.push(root);
+            }
+            preOrder(root.left,res);
+            preOrder(root.right,res);
+        }
+        let res = [];
+        preOrder(create_tree([1,7,3,4,5,6,7]), res);
+        console.log(res);
+        //例子2：给定一个二叉树，搜索并记录所有值为7的节点的路径并返回路径列表
+        function preOrder1(root, path, res){
+            if(root == null){
+                return;
+            }
+            path.push(root.val);
+            if(root.val == 7){
+                res.push([...path]);
+            }
+            preOrder1(root.left,path,res);
+            preOrder1(root.right,path,res);
+            path.pop();//回退
+        }
+        let res1 = [];
+        preOrder1(create_tree([1,7,3,4,5,6,7]), [], res1);
+        console.log(res1);
+        function preOrder2(root, path, res){
+            path.push(root.val);
+            if(root.val == 7){
+                res.push([...path]);
+            }
+            if(root.left != null) preOrder2(root.left,path,res);
+            if(root.right != null) preOrder2(root.right,path,res);
+            path.pop();
+        }
+        let res2 = [];
+        preOrder1(create_tree([1,7,3,4,5,6,7]), [], res2);
+        console.log(res2);
+        //例子3：返回不包含3的从根节点到7节点的路径
+        function search(root, path, res){
+            if(root == null)return;
+            if(root.val == 3) return;
+            path.push(root.val);
+            if(root.val == 7){//可能一条路径有多个7，都可以作为路径返回
+                res.push([...path]);
+            }
+            search(root.left, path, res);
+            search(root.right, path, res);
+            path.pop();
+        }
+        let res3 = [];
+        search(create_tree([1,7,3,4,5,6,7]),[],res3);
+        console.log(res3);
+        //例题4：全排列，输入一个整数数组，其中不包含重复元素，返回所有可能的排列。
+        function permute(list){
+            function A(visited, path){
+                if(visited.size==list.length){//所有元素都用上了
+                    res.push([...path]);
+                }
+                //往path中添加一个元素
+                for(let i=0;i<list.length;i++){
+                    if(!visited.has(i)){//不存在，可以加进来
+                        visited.add(i);
+                        path.push(list[i]);
+                        A(visited, path);
+                        path.pop();
+                        visited.delete(i);
+                    }
+                }
+            }
+            let res = [];
+            A(new Set(), []);
+            return res;
+        }
+        console.log(permute([1,2,3]));
+        //例题5：全排列，输入一个整数数组，其中包含重复元素，返回所有可能的排列(去重)。
+        function permute1(list){//保证同一层内一个数只被选取一次，但是不同层可以选取同一个元素，那么同一层使用set，记录数值，不同层使用set，记录下标
+            function A(level_visited, path){//level_visited是不同层的
+                if(level_visited.size == list.length){
+                    res.push([...path]);
+                }
+                let same_visited = new Set();//same_visited是同层的
+                for(let i=0;i<list.length;i++){
+                    if(!level_visited.has(i) && !same_visited.has(list[i])){
+                        path.push(list[i]);
+                        level_visited.add(i);
+                        same_visited.add(list[i]);
+                        A(level_visited, path);
+                        level_visited.delete(i);
+                        path.pop();
+                    }
+                }
+            }
+            let res = [];
+            A(new Set(), []);
+            return res;
+        }
+        console.log(permute1([1,1,2]));
+        //例题6：完全背包问题，给定一个正整数数组 nums 和一个目标正整数 target ，请找出所有可能的组合，使得组合中的元素和等于 target 。给定数组无重复元素，每个元素可以被选取多次。请以列表形式返回这些组合，列表中不应包含重复组合。
+        function subsetSumINaive(nums, target) {//选取时，选下标[3,4]和[4,3]是一样的，因此在第二支[4,3]时应该进行剪枝，从[4,4]开始,即下一层的起始位置必须是上一层下标及其以后
+            function select(target, path, start){
+                if(target == 0){
+                    res.push([...path]);
+                }
+                for(let i=start;i<nums.length;i++){
+                    if(nums[i] <= target){
+                        path.push(nums[i]);
+                        select(target-nums[i], path, i);
+                        path.pop();
+                    }
+                }
+            }
+            let res = [];
+            select(target, [], 0);
+            return res;
+        }
+        console.log(subsetSumINaive([3,4,5],9));
+        //例题7：0-1背包问题，有重复元素，但每个元素只能被选取一次，给定一个正整数数组 nums 和一个目标正整数 target ，请找出所有可能的组合，使得组合中的元素和等于 target 。
+        function subsetSumINaive1(nums, target) {//因为有相同元素，因此同一层不能出现一样的值
+            function select(target,visited , path, start){
+                if(target == 0){
+                    res.push([...path]);
+                }
+                let same_visited = new Set();
+                for(let i=start;i<nums.length;i++){
+                    if(nums[i] <= target && !visited.has(i) && !same_visited.has(nums[i])){
+                        same_visited.add(nums[i]);
+                        visited.add(i);
+                        path.push(nums[i]);
+                        select(target-nums[i], visited, path, i+1);//一个元素只能使用一次i+1
+                        visited.delete(i);
+                        path.pop();
+                    }
+                }
+            }
+            let res = [];
+            select(target,new Set(), [], 0);
+            return res;
+        }
+        console.log(subsetSumINaive1([4,4,5],9));
+        //例题8：n皇后，根据国际象棋的规则，皇后可以攻击与同处一行、一列或一条斜线上的棋子。给定个皇后和一个 大小的棋盘，寻找使得所有皇后之间无法相互攻击的摆放方案。
+        function nQueens(n) {//判断不能在同一列只需要使用visited即可，每次选取的就是不同行，斜线使用两个一位数组判断，可以得到正斜线的col-row是相同的，反斜线的col+row是相等的,因为列是不能重复的因此不存在需要去重的需求
+            function select(visited, path, i, forword, backword){//i表示第几行
+                if(i==n){
+                    res.push(JSON.parse(JSON.stringify(path)));
+                    return;
+                }
+                for(let j=0;j<n;j++){
+                    if(!forword.has(i-j)) forword.set(i-j, false);
+                    if(!backword.has(i-j)) backword.set(i-j, false);
+                    if(!visited.has(j) && !forword.get(i-j) && !backword.get(i+j)){//非同一列,不在一条斜线
+                        forword.set(i-j, !forword.get(i-j));
+                        backword.set(i+j, !backword.get(i+j));
+                        visited.add(j);
+                        path.push(j);//把Q在第几列存储起来
+                        select(visited, path, i+1, forword, backword);
+                        path.pop();
+                        visited.delete(j);
+                        forword.set(i-j, !forword.get(i-j));
+                        backword.set(i+j, !backword.get(i+j));
+                    }
+                }
+            }
+            let res = [];
+            select(new Set(), [], 0, new Map(), new Map());
+            for(let i=0;i<res.length;i++){
+                for(let j=0;j<res[i].length;j++){
+                    let temp = new Array(n).fill('.');
+                    temp[res[i][j]] = 'Q';
+                    res[i][j] = temp.join('');
+                }
+            }
+            return res;
+        }
+        console.log(nQueens(4));
+        console.log(nQueens(1));
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

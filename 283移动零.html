@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>283移动0</title>
+    <meta name="description" content="给定一个数组 nums，编写一个函数将所有 0 移动到数组的末尾，同时保持非零元素的相对顺序。请注意 ，必须在不复制数组的情况下原地对数组进行操作。">
+    <script>
+        /**
+         * @param {number[]} nums
+         * @return {void} Do not return anything, modify nums in-place instead.
+         */
+        var moveZeroes = function(nums) {
+            let zero_number = 0;
+            let change_flag = false;
+            for(let i = 0; i < nums.length; i++){
+                if(nums[i] != 0){
+                    nums[i-zero_number] = nums[i];
+                    change_flag = true;
+                }else{
+                    zero_number ++;
+                }
+            }
+            if(change_flag){
+                for(let i=1; i<= zero_number;i++){
+                    nums[nums.length-i] = 0;
+                }
+            }
+            return nums;
+        };
+        console.log(moveZeroes([0,1,0,3,12]));
+        console.log(moveZeroes([0]));
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

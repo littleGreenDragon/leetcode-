@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>295数据流的中位数</title>
+    <meta name="description" content="中位数是有序整数列表中的中间值。如果列表的大小是偶数，则没有中间值，中位数是两个中间值的平均值。
+    例如 arr = [2,3,4] 的中位数是 3 。
+    例如 arr = [2,3] 的中位数是 (2 + 3) / 2 = 2.5 。
+    实现 MedianFinder 类:
+    MedianFinder() 初始化 MedianFinder 对象.
+    void addNum(int num) 将数据流中的整数 num 添加到数据结构中。 
+    double findMedian() 返回到目前为止所有元素的中位数。与实际答案相差 10-5 以内的答案将被接受。">
+    <script>
+        
+        var MedianFinder = function() {
+            class Heap{
+                constructor(compare){
+                    this.compare = compare;
+                    this.data = [];
+                    this.length = 0;
+                }
+                create_list(list){
+                    for(let i=0;i<list.length;i++){
+                        this.push(list[i]);
+                    }
+                }
+                push(num){
+                    this.data[this.length] = num;
+                    this.bubble_up(this.length);
+                    this.length++;
+                }
+                bubble_up(index){
+                    let parent = Math.floor((index-1)/2);
+                    while(parent>=0 && this.compare(this.data[index], this.data[parent])>0){
+                        [this.data[index], this.data[parent]] = [this.data[parent], this.data[index]];
+                        index = parent;
+                        parent = Math.floor((index-1)/2);
+                    }
+                }
+                print(){
+                    let res = [];
+                    while(this.length>0){
+                        res.push(this.pop());
+                    }
+                    return res;
+                }
+                top(){
+                    return this.data[0];
+                }
+                pop(){
+                    let res = this.data[0];
+                    [this.data[0], this.data[this.length-1]] = [this.data[this.length-1], this.data[0]];
+                    this.length--;
+                    this.sink(0);
+                    return res;
+                }
+                sink(index){
+                    let left_child = 2*index+1;
+                    let right_child = 2*index+2;
+                    while(left_child < this.length){
+                        let max_child = left_child;
+                        if(right_child < this.length && this.compare(this.data[right_child], this.data[left_child])>0){
+                            max_child = right_child;
+                        }
+                        if(this.compare(this.data[max_child], this.data[index])>0){
+                            [this.data[max_child], this.data[index]] = [this.data[index], this.data[max_child]];
+                        }else{
+                            break;
+                        }
+                        index = max_child;
+                        left_child = 2*index+1;
+                        right_child = 2*index+2;
+                    }
+                }
+            }
+            this.right_heap = new Heap(function(a,b){
+                return b-a;
+            });
+            this.left_heap = new Heap(function(a,b){
+                return a-b;
+            });
+        };
+        /** 
+         * @param {number} num
+         * @return {void}
+         */
+        MedianFinder.prototype.addNum = function(num) {
+            if(this.left_heap.length == 0 || (this.left_heap.length >0 && num <= this.left_heap.top())){//应该插到左堆
+                this.left_heap.push(num);
+            }else{//应该插入右堆
+                this.right_heap.push(num);
+            }
+            if(this.left_heap.length - this.right_heap.length > 1){
+                this.right_heap.push(this.left_heap.pop());
+            }else if (this.right_heap.length - this.left_heap.length > 1){
+                this.left_heap.push(this.right_heap.pop());
+            }
+        };
+
+        /**
+         * @return {number}
+         */
+        MedianFinder.prototype.findMedian = function() {
+            if(this.left_heap.length == this.right_heap.length){//偶数
+                return (this.left_heap.top() + this.right_heap.top())/2;
+            }else {//奇数,哪一边的树更多，那边的堆顶就是中位数
+                return this.left_heap.length>this.right_heap.length ? this.left_heap.top(): this.right_heap.top();
+            }
+        };
+
+        /**
+         * Your MedianFinder object will be instantiated and called as such:
+         * var obj = new MedianFinder()
+         * obj.addNum(num)
+         * var param_2 = obj.findMedian()
+         */
+        function test(list, res){
+            let median = new MedianFinder();
+            for(let i=1;i<list.length;i++){
+                if(list[i].length == 0){
+                    console.log(median.findMedian() == res[i]);
+                }else{
+                    median.addNum(list[i][0]);
+                }   
+            }
+        }
+        test([[],[-1],[],[-2],[],[-3],[],[-4],[],[-5],[]], [null,null,-1.0,null,-1.5,null,-2.0,null,-2.5,null,-3.0]);
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

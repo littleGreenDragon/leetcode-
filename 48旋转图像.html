@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>48旋转图像</title>
+    <meta name="description" content="给定一个 n × n 的二维矩阵 matrix 表示一个图像。请你将图像顺时针旋转 90 度。你必须在 原地 旋转图像，这意味着你需要直接修改输入的二维矩阵。请不要 使用另一个矩阵来旋转图像。">
+    <script>
+        /**
+         * @param {number[][]} matrix
+         * @return {void} Do not return anything, modify matrix in-place instead.
+         */
+        var rotate1 = function(matrix) {//拿个新的矩阵去存转换后的结果，再赋值回来
+            let ro_matrix = JSON.parse(JSON.stringify(matrix));
+            for(let i=0;i<matrix.length;i++){
+                for(let j=0;j<matrix[i].length;j++){
+                    ro_matrix[j][matrix[0].length-1-i] = matrix[i][j];
+                }
+            }
+            for(let i=0;i<ro_matrix.length;i++){
+                for(let j=0;j<ro_matrix[i].length;j++){
+                    matrix[i][j] = ro_matrix[i][j];
+                }
+            }
+            return matrix;
+        };
+        var rotate2 = function(matrix) {//以行为基准，使用[i,j]位置作为哨兵，绕一圈交换
+            //一圈一圈往里改变
+            let top = 0;//行的边界
+            let bottom = matrix.length-1;
+            let left=0;//列的边界
+            let right = matrix[0].length-1;
+            while(left<right){//因为是方阵矩阵，所以只用判断left是否到right即可
+                for(let j=0;j<right-left;j++){
+                    [matrix[top][left+j], matrix[left+j][right]] = [matrix[left+j][right], matrix[top][left+j]];
+                    [matrix[top][left+j], matrix[bottom][right-j]] = [matrix[bottom][right-j], matrix[top][left+j]];
+                    [matrix[top][left+j], matrix[bottom-j][left]] = [matrix[bottom-j][left], matrix[top][left+j]];
+                }
+                left++;
+                right--;
+                top++;
+                bottom--;
+            }
+            return matrix;
+        };
+        var rotate3 = function(matrix) {//以左上角1/4区域为基准，使用[i,j]位置作为哨兵，绕一圈交换
+            for(let i=0;i<Math.floor(matrix.length/2);i++){
+                for(let j=0;j<(Math.floor((matrix[i].length+1)/2));j++){
+                    [matrix[i][j], matrix[j][matrix[0].length-1-i]] =  [matrix[j][matrix[0].length-1-i],matrix[i][j]];
+                    [matrix[i][j], matrix[matrix.length-1-i][matrix[0].length-1-j]] =  [matrix[matrix.length-1-i][matrix[0].length-1-j],matrix[i][j]];
+                    [matrix[i][j], matrix[matrix.length-1-j][i]] =  [matrix[matrix.length-1-j][i],matrix[i][j]];
+                }
+            }
+            return matrix;
+        };
+        
+        console.log(rotate1([[1,2,3],[4,5,6],[7,8,9]]));//[[7,4,1],[8,5,2],[9,6,3]]
+        console.log(rotate1([[5,1,9,11],[2,4,8,10],[13,3,6,7],[15,14,12,16]]));//[[15,13,2,5],[14,3,4,1],[12,6,8,9],[16,7,10,11]]
+
+        console.log(rotate2([[1,2,3],[4,5,6],[7,8,9]]));//[[7,4,1],[8,5,2],[9,6,3]]
+        console.log(rotate2([[5,1,9,11],[2,4,8,10],[13,3,6,7],[15,14,12,16]]));//[[15,13,2,5],[14,3,4,1],[12,6,8,9],[16,7,10,11]]
+
+        console.log(rotate3([[1,2,3],[4,5,6],[7,8,9]]));//[[7,4,1],[8,5,2],[9,6,3]]
+        console.log(rotate3([[5,1,9,11],[2,4,8,10],[13,3,6,7],[15,14,12,16]]));//[[15,13,2,5],[14,3,4,1],[12,6,8,9],[16,7,10,11]]
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

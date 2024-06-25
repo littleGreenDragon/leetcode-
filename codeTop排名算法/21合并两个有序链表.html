@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>21合并两个有序链表</title>
+    <meta name="description" content="将两个升序链表合并为一个新的 升序 链表并返回。新链表是通过拼接给定的两个链表的所有节点组成的。 ">
+    <script>
+        /**
+         * Definition for singly-linked list.
+         * function ListNode(val, next) {
+         *     this.val = (val===undefined ? 0 : val)
+         *     this.next = (next===undefined ? null : next)
+         * }
+         */
+        function ListNode(val, next){
+            this.val = (val==undefined? 0:val);
+            this.next = (next==undefined? null:next);
+        }
+        function create_list(list){
+            if(list.length == 0)return null;
+            let head = new ListNode(list[0]);
+            let temp = head;
+            for(let i=1;i<list.length;i++){
+                temp.next = new ListNode(list[i]);
+                temp = temp.next;
+            }
+            return head;
+        }
+        /**
+         * 9:14-9:21
+         * @param {ListNode} list1
+         * @param {ListNode} list2
+         * @return {ListNode}
+         */
+        var mergeTwoLists = function(list1, list2) {
+            let i_1 =list1;
+            let i_2 = list2;
+            let head = new ListNode();
+            let i_3 =  head;
+            while(i_1!=null && i_2!=null){
+                if(i_1.val < i_2.val){
+                    i_3.next = i_1;
+                    i_1 = i_1.next;
+                }else{
+                    i_3.next = i_2;
+                    i_2 = i_2.next;
+                }
+                i_3 = i_3.next;
+            }
+            if(i_1!=null){
+                i_3.next = i_1;
+            }
+            if(i_2!=null){
+                i_3.next = i_2;
+            }
+            return head.next;
+        };
+        console.log(mergeTwoLists(create_list([1,2,4]), create_list([1,3,4])));//[1,1,2,3,4,4]
+        console.log(mergeTwoLists(create_list([]), create_list([])));//[]
+        console.log(mergeTwoLists(create_list([]), create_list([0])));//[0]
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

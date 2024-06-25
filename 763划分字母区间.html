@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>划分字母区间</title>
+    <meta name="description" content="给你一个字符串 s 。我们要把这个字符串划分为尽可能多的片段，同一字母最多出现在一个片段中。 注意，划分结果需要满足：将所有划分结果按顺序连接，得到的字符串仍然是 s 。
+    返回一个表示每个字符串片段的长度的列表。">
+    <script>
+        /**
+         * @param {string} s
+         * @return {number[]}
+         */
+        var partitionLabels = function(s) {//使用map记录每个字母的起始和结尾，划分的界限最短就是该段的首字母也作为尾字母，否则就是该段内部的字母界限超出首字母的界限，取最大即可
+            function get_start_end(start, end){
+                let map = new Map();
+                for(let i=start;i<=end;i++){
+                    if(map.has(s[i])){
+                        let temp = map.get(s[i]);
+                        temp[1] = i;
+                        map.set(s[i], temp);
+                    }else{
+                        map.set(s[i], [i,i]);
+                    }
+                }
+                return map;
+            }
+            if(s.length == 0) return [];
+            let res = [];
+            let start_end = get_start_end(0,s.length-1);
+            let start=0;
+            let end = start_end.get(s[0])[1];
+            for(let i=start;i<s.length;i++){
+                end = Math.max(end, start_end.get(s[i])[1]);
+                if(i == end){
+                    res.push(end-start+1);
+                    start = end + 1;
+                }
+            }
+            return res;
+        };
+        console.log(partitionLabels("ababcbacadefegdehijhklij"));//[9,7,8]
+        console.log(partitionLabels("eccbbbbdec"));//[10]
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

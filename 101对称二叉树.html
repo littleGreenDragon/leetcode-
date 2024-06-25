@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>101对称二叉树</title>
+    <meta name="description" content="给你一个二叉树的根节点 root ， 检查它是否轴对称。">
+    <script>
+        /**
+         * Definition for a binary tree node.
+         * function TreeNode(val, left, right) {
+         *     this.val = (val===undefined ? 0 : val)
+         *     this.left = (left===undefined ? null : left)
+         *     this.right = (right===undefined ? null : right)
+         * }
+         */
+        function TreeNode(val,left,right){
+            this.val = val==undefined? 0:val;
+            this.left = left==undefined? null:left;
+            this.right = right==undefined? null:right;
+        }
+        function create_tree(list){
+            if(list.length == 0) return null;
+            let root = new TreeNode(list[0]);
+            let queue = [root];
+            for(let i=1;i<list.length;i+=2){
+                let parent = queue.shift();
+                if(list[i]!=null){
+                    parent.left = new TreeNode(list[i]);
+                    queue.push(parent.left);
+                }
+                if(i+1<list.length && list[i+1]!=null){
+                    parent.right = new TreeNode(list[i+1]);
+                    queue.push(parent.right);
+                }
+            }
+            return root;
+        }
+        /**
+         * @param {TreeNode} root
+         * @return {boolean}
+         */
+        var isSymmetric = function(root) {//错的，这么写是判断每个节点是否对称，题目要求的是轴对称
+            function symmetric(root){
+                if(root == null) return true;
+                if((root.left != null && root.right != null && root.left.val == root.right.val) || (root.left == null && root.right == null)){//有可能对称，继续深层遍历
+                    return  symmetric(root.left) && symmetric(root.right);
+                }else{
+                    return false;
+                }
+            }
+            return symmetric(root);
+        };
+        var isSymmetric1 = function(root) {//使用两个栈，一个做前序遍历，一个从另一边做遍历
+            let left_stack = [];
+            let right_stack = [];
+            let left_parent = root;
+            let right_parent = root;
+            let start = true;
+            while(left_stack.length >0 || start){
+                start = false;
+                if((left_parent == null && right_parent == null) || (left_parent != null && right_parent != null && left_parent.val == right_parent.val)){
+                    if(left_parent != null){
+                        left_stack.push(left_parent);
+                        right_stack.push(right_parent);
+                        left_parent = left_parent.left;
+                        right_parent = right_parent.right;
+                    }else{
+                        left_parent = left_stack.pop().right;
+                        right_parent = right_stack.pop().left;
+                    }
+                }else{
+                    return false;
+                }
+            }
+            return true;
+        };
+        var isSymmetric2 = function(root) {//将树一个当两个用，用同一个栈，每次压两边的节点，弹出两个来判断
+            function symmetric(root1, root2){
+                let stack = [];
+                stack.push(root1);
+                stack.push(root2);
+                while(stack.length>0){
+                    let right = stack.pop();
+                    let left = stack.pop();
+                    if((right == null && left == null) || (right != null && left != null && left.val == right.val)){
+                        if(left != null){
+                            stack.push(left.left);
+                            stack.push(right.right);
+                            stack.push(left.right);
+                            stack.push(right.left);
+                        }
+                    }else{
+                        return false;
+                    }
+                }
+                return true;
+            }
+            return symmetric(root, root);
+        };
+        var isSymmetric3 = function(root) {//递归写法
+            function symmetric(root1, root2){
+                if(root1 == null && root2 == null){
+                    return true;
+                }else if(root1!=null && root2!=null && root1.val ==  root2.val){
+                    return symmetric(root1.left, root2.right) && symmetric(root1.right, root2.left);
+                }else{
+                    return false;
+                }
+            }
+            return symmetric(root, root);
+        };
+
+        console.log(isSymmetric(create_tree([1,2,2,3,4,4,3])));//true
+        console.log(isSymmetric(create_tree([1,2,2,null,3,null,3])));//false
+
+        console.log(isSymmetric1(create_tree([1,2,2,3,4,4,3])));//true
+        console.log(isSymmetric1(create_tree([1,2,2,null,3,null,3])));//false
+
+        console.log(isSymmetric2(create_tree([1,2,2,3,4,4,3])));//true
+        console.log(isSymmetric2(create_tree([1,2,2,null,3,null,3])));//false
+
+        console.log(isSymmetric3(create_tree([1,2,2,3,4,4,3])));//true
+        console.log(isSymmetric3(create_tree([1,2,2,null,3,null,3])));//false
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

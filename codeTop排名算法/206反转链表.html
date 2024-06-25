@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>206反转链表</title>
+    <meta name="description" content="给你单链表的头节点 head ，请你反转链表，并返回反转后的链表。">
+    <script>
+        /**
+         * Definition for singly-linked list.
+         * function ListNode(val, next) {
+         *     this.val = (val===undefined ? 0 : val)
+         *     this.next = (next===undefined ? null : next)
+         * }
+         */
+        function ListNode(val,next){
+            this.val = (val==undefined? 0:val);
+            this.next = (next==undefined? null:next);
+        }
+        function create_list(list){
+            if(list.length == 0){
+                return null;
+            }
+            let head = new ListNode(list[0]);
+            let temp = head;
+            for(let i=1;i<list.length;i++){
+                temp.next = new ListNode(list[i]);
+                temp = temp.next;
+            }
+            return head;
+        }
+        /**
+         * 8:43-8:53
+         * @param {ListNode} head
+         * @return {ListNode}
+         */
+        var reverseList = function(head) {
+            if(head == null || head.next == null) return head;
+            head = new ListNode(undefined, head);//添加一个头节点
+            let other = head.next;//有序的尾
+            while(other.next!=null){
+                let temp = other.next;
+                other.next = other.next.next;
+                temp.next = head.next;
+                head.next = temp;
+            }
+            return head.next;
+        };
+        // console.log(reverseList(create_list([1,2,3,4,5])));//[5,4,3,2,1]
+        // console.log(reverseList(create_list([])));//[]
+    </script>
+</head>
+<body>
+    
+</body>
+</html>
