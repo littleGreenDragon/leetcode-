@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>48旋转图像</title>
+    <meta name="description" content="给定一个 n × n 的二维矩阵 matrix 表示一个图像。请你将图像顺时针旋转 90 度。
+    你必须在 原地 旋转图像，这意味着你需要直接修改输入的二维矩阵。请不要 使用另一个矩阵来旋转图像。">
+    <script>
+        /**
+         * 3:32-3:41
+         * @param {number[][]} matrix
+         * @return {void} Do not return anything, modify matrix in-place instead.
+         */
+        var rotate = function(matrix) {
+            let m = matrix.length;
+            let n = matrix[0].length;
+            for(let i=0;i<Math.floor(m/2);i++){
+                for(let j=0;j<Math.ceil(n/2);j++){
+                    //一个数对应的四个位置进行旋转
+                    [matrix[i][j], matrix[j][n-1-i]] = [matrix[j][n-1-i], matrix[i][j]];
+                    [matrix[i][j], matrix[m-1-i][n-1-j]] = [matrix[m-1-i][n-1-j], matrix[i][j]];
+                    [matrix[i][j], matrix[m-1-j][i]] = [matrix[m-1-j][i], matrix[i][j]];
+                }
+            }
+            return matrix;
+        };
+        console.log(rotate([[1,2,3],[4,5,6],[7,8,9]]));//[[7,4,1],[8,5,2],[9,6,3]]
+        console.log(rotate([[5,1,9,11],[2,4,8,10],[13,3,6,7],[15,14,12,16]]));//[[15,13,2,5],[14,3,4,1],[12,6,8,9],[16,7,10,11]]
+ 
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

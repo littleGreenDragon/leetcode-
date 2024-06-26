@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>402移除k位数字</title>
+    <meta name="description" content="给你一个以字符串表示的非负整数 num 和一个整数 k ，移除这个数中的 k 位数字，使得剩下的数字最小。请你以字符串形式返回这个最小的数字。">
+    <script>
+        /**
+         * 5:22-5:51 这个题的用例真的是变态，改了好久
+         * @param {string} num
+         * @param {number} k
+         * @return {string}
+         */
+        var removeKdigits = function(num, k) {//使用栈，依次将数的每一位添加入栈，如果比栈内元素大，暂时保留，如果比栈内的小，弹栈，入更小的
+            if(k>=num.length) return '0';
+            let stack = [];
+            let i=0
+            let temp = k;
+            for(;i<num.length;i++){
+                if(stack.length>0 && stack.at(-1) > num[i]){
+                    while(temp>0 && stack.at(-1) > num[i]){
+                        stack.pop();
+                        temp--;
+                    }
+                }
+                stack.push(num[i]);
+            }
+            let res = stack.join('');
+            if(res.length > num.length-k)  res = res.slice(0, num.length-k);
+            i=0;
+            for(;i<res.length;i++){
+                if(res[i] != '0') break;
+            }
+            res = res.slice(i);
+            if(res.length == 0) return '0';
+            return res;
+        };
+        console.log(removeKdigits(num = "1432219", k = 3));//"1219"
+        console.log(removeKdigits(num = "10200", k = 1));//"200"
+        console.log(removeKdigits(num = "10", k = 2));//"0"
+        console.log(removeKdigits(num = "10", k = 1));//"0"
+        console.log(removeKdigits(num = "112", k = 1));//"11"
+        console.log(removeKdigits(num = "10001", k = 1));//"1"
+        console.log(removeKdigits(num = "10001", k = 4));//"0"
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>316去除重复字母</title>
+    <meta name="description" content="给你一个字符串 s ，请你去除字符串中重复的字母，使得每个字母只出现一次。需保证 返回结果的
+    字典序最小（要求不能打乱其他字符的相对位置）。">
+    <script>
+        /**
+         * 5:55
+         * @param {string} s
+         * @return {string}
+         */
+        var removeDuplicateLetters = function(s) {//记录每个字母出现的个数，如果这个字母就出现了一次，那么这个字母的位置就不变，如果这个字母有多个，那么后续如果出现了比本字母小的字母，就应该使用更小的(注意，如果发现了更小的，但是这个更小的在前面已经用过了，那就不能再使用了)
+            let char_map = new Map();
+            for(let i=0;i<s.length;i++){
+                if(!char_map.has(s[i])){
+                    char_map.set(s[i], 1);
+                }else{
+                    char_map.set(s[i], char_map.get(s[i])+1);
+                }
+            }
+            let stack = [];
+            let visited = new Set();
+            for(let i=0;i<s.length;i++){
+                if(stack.length>0 && stack.at(-1) > s[i]){
+                    while(stack.at(-1) > s[i] && char_map.get(stack.at(-1))>0 && !visited.has(s[i])){//可以弹出
+                        visited.delete(stack.pop());
+                    }
+                }
+                if(! visited.has(s[i])){
+                    stack.push(s[i]);
+                    visited.add(s[i]);
+                }
+                char_map.set(s[i], char_map.get(s[i])-1);
+            }
+            return stack.join('');
+        };
+        console.log(removeDuplicateLetters(s = "bcabc"));//'abc'
+        console.log(removeDuplicateLetters(s = "cbacdcbc"));//"acdb"
+        console.log(removeDuplicateLetters(s = "bbcaac"));//"bac"
+        console.log(removeDuplicateLetters(s = "abacb"));//"abc"
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

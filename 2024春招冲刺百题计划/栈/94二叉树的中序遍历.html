@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>94二叉树的中序遍历</title>
+    <meta name="description" content="给定一个二叉树的根节点 root ，返回 它的 中序 遍历 。">
+    <script>
+        /**
+         * Definition for a binary tree node.
+         * function TreeNode(val, left, right) {
+         *     this.val = (val===undefined ? 0 : val)
+         *     this.left = (left===undefined ? null : left)
+         *     this.right = (right===undefined ? null : right)
+         * }
+         */
+        function TreeNode(val, left, right){
+            this.val = val==undefined? 0:val;
+            this.left = left==undefined? null:left;
+            this.right = right==undefined? null:right;
+        }
+        function create_tree(list){
+            if(list.length == 0) return null;
+            let root = new TreeNode(list[0]);
+            let queue = [root];
+            for(let i=1;i<list.length;i+=2){
+                let parent = queue.shift();
+                if(list[i] != null){
+                    parent.left = new TreeNode(list[i]);
+                    queue.push(parent.left);
+                }
+                if(i+1 < list.length && list[i+1] != null){
+                    parent.right = new TreeNode(list[i+1]);
+                    queue.push(parent.right);
+                }
+            }
+            return root;
+        }
+        /**
+         * @param {TreeNode} root
+         * @return {number[]}
+         */
+        var inorderTraversal = function(root) {
+            let res = [];
+            function search(root){
+                if(root == null) return;
+                search(root.left);
+                res.push(root.val);
+                search(root.right);
+            }
+            search(root);
+            return res;
+        };
+        //5:14-5:21
+        var inorderTraversal1 = function(root) {
+            if(root ==null) return [];
+            let stack = [];
+            let res = [];
+            while(stack.length>0 || root){
+                while(root != null){
+                    stack.push(root);
+                    root = root.left;
+                }
+                let parent = stack.pop();
+                root = parent.right;
+                res.push(parent.val);
+            }
+            return res;
+        };
+        
+        console.log(inorderTraversal(create_tree([1,null,2,3])));//[1,3,2]
+        console.log(inorderTraversal(create_tree([])));//[]
+        console.log(inorderTraversal(create_tree([1])));//[1]
+
+        console.log(inorderTraversal1(create_tree([1,null,2,3])));//[1,3,2]
+        console.log(inorderTraversal1(create_tree([])));//[]
+        console.log(inorderTraversal1(create_tree([1])));//[1]
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

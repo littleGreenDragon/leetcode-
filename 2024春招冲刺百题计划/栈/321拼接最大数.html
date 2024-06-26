@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>321拼接最大数</title>
+    <meta name="description" content="给你两个整数数组 nums1 和 nums2，它们的长度分别为 m 和 n。数组 nums1 和 nums2 分别代表两个数各位上的数字。同时你也会得到一个整数 k。
+    请你利用这两个数组中的数字中创建一个长度为 k <= m + n 的最大数，在这个必须保留来自同一数组的数字的相对顺序。
+    返回代表答案的长度为 k 的数组。">
+    <script>
+        /**
+         * 6:49
+         * @param {number[]} nums1
+         * @param {number[]} nums2
+         * @param {number} k
+         * @return {number[]}
+         */
+        var maxNumber = function(nums1, nums2, k) {//每次从两个数组内提取出子序列，并且两个序列的长度加起来=k,将两个子序列合并成新序列，取最大的
+            function get_max_sub_from_one_array(nums,k){
+                if(k==nums.length) return nums;
+                if(k==0) return [];
+                let res = [];
+                for(let i=0;i<nums.length;i++){
+                    while(res.length>0 && res.at(-1) < nums[i] && res.length + nums.length-i > k){
+                        res.pop();
+                    }
+                    res.push(nums[i]);
+                }
+                return res.slice(0,k);
+            }
+            function merge(nums1, nums2){
+                let res = [];
+                let i=0;
+                let j=0;
+                while(i<nums1.length && j<nums2.length){
+                    if(nums1[i] > nums2[j]){
+                        res.push(nums1[i++]);
+                    }else if(nums1[i] < nums2[j]){
+                        res.push(nums2[j++]);
+                    }else{
+                        //找到第一组不相同的数
+                        let temp_i = i;
+                        let temp_j = j;
+                        while(nums1[temp_i] == nums2[temp_j] && temp_i<nums1.length && temp_j<nums2.length){
+                            temp_i++;
+                            temp_j++;
+                        }
+                        if((temp_j==nums2.length && temp_i<nums1.length) || nums1[temp_i] > nums2[temp_j]){
+                            res.push(nums1[i++]);
+                        }else{
+                            res.push(nums2[j++]);
+                        }
+                    }
+                }
+                while(i<nums1.length){
+                    res.push(nums1[i++]);
+                }
+                while(j<nums2.length){
+                    res.push(nums2[j++]);
+                }
+                return res;
+            }
+            let res;
+            //枚举子序列
+            for(let i=0;i<=nums1.length && i<=k; i++){
+                if(k-i<=nums2.length ){
+                    let first = get_max_sub_from_one_array(nums1, i);
+                    let second = get_max_sub_from_one_array(nums2, k-i);
+                    let combine = merge(first, second);
+                    if(res == undefined || res.join('') < combine.join('')){
+                        res = combine;
+                    }
+                }
+            }
+            return res;
+        };
+        console.log(maxNumber(nums1 = [3,4,6,5], nums2 = [9,1,2,5,8,3], k = 5));//[9,8,6,5,3]
+        console.log(maxNumber(nums1 = [6,7], nums2 = [6,0,4], k = 5));//[6,7,6,0,4]
+        console.log(maxNumber(nums1 = [3,9], nums2 = [8,9], k = 3));//[9,8,9]
+        console.log(maxNumber(nums1 = [6,7,5], nums2 = [4,8,1], k = 3));//[8.7,5]
+        console.log(maxNumber(nums1 = [2,5,6,4,4,0], nums2 = [7,3,8,0,6,5,7,6,2], k = 15));//[7,3,8,2,5,6,4,4,0,6,5,7,6,2,0]...
+    </script>
+</head>
+<body>
+    
+</body>
+</html>
